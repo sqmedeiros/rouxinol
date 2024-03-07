@@ -4,9 +4,9 @@ export OUTPUT = > /dev/null 2>&1
 export TEST = ../test/entry02.txt ../test/entry03.txt
 
 all:
-	+$(MAKE) -C all
+	+$(MAKE) -C rand
 	#+$(MAKE) -C training
 	#+$(MAKE) -C control
 
 clean:
-	rm all/*.exe training/*.exe control/*.exe
+	rm rand/*.exe training/*.exe control/*.exe
