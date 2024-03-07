@@ -3,21 +3,21 @@ import time
 from datetime import datetime
 
 dirs = [
-  "cses-1071_Number_Spiral",
-  "cses-1082_Sum_of_Divisors",
-  "cses-1084_Apartments",
- # "cses-1140_Projects",
- # "cses-1158_Bookshop",
- # "cses-1621_Distinct_Numbers",
- # "cses-1632_Movie_Festival_II",
- # "cses-1634_Minimizing_Coins",
- # "cses-1635_Coin_Combinations_I",
- # "cses-1636_Coin_Combinations_II",
- # "cses-1639_Edit_Distance",
- # "cses-1640_Sum_of_Two_Values",
- # "cses-1642_Sum_of_Four_Values",
- # "cses-1643_Maximum_Subarray_Sum",
- # "cses-2185_Prime_Multiples"
+  "1071-Number_Spiral",
+  "1082-Sum_of_Divisors",
+  "1084-Apartments",
+  "1140-Projects",
+  "1158-Bookshop",
+  "1621-Distinct_Numbers",
+  "1632-Movie_Festival_II",
+  "1634-Minimizing_Coins",
+  "1635-Coin_Combinations_I",
+  "1636-Coin_Combinations_II",
+  "1639-Edit_Distance",
+  "1640-Sum_of_Two_Values",
+  "1642-Sum_of_Four_Values",
+  "1643-Maximum_Subarray_Sum",
+  "2185-Prime_Multiples"
 ]
 
 
