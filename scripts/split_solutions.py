@@ -16,6 +16,7 @@ if not path[len(path)-1] == "/":
   path = path + "/"
 
 files = os.listdir(path + rand_dir)
+random.shuffle(files)
 
 i_training = 0
 i_control = 0
