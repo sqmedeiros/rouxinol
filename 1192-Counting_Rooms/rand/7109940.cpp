@@ -23,7 +23,7 @@
 //#pragma GCC optimize("-ffast-math")
 //#pragma GCC optimize("-funroll-loops")
 //#pragma GCC optimize("-funroll-all-loops,-fpeel-loops,-funswitch-loops")
-//#pragma GCC target("sse,sse2,sse3,ssse3,sse4,sse4.2,popcnt,abm,mmx,avx2,tune=native")
+//#pragma GCC target("sse,sse2,sse3,ssse3,sse4,sse4.2,popcnt,abm,mmx,tune=native")
 //#define ll long long
 //#define ull unsigned long long
 //#define Ahmed_Bahy ios_base::sync_with_stdio(0), cin.tie(0), cout.tie(0);
@@ -101,7 +101,7 @@
 //#pragma GCC optimize("-ffast-math")
 //#pragma GCC optimize("-funroll-loops")
 //#pragma GCC optimize("-funroll-all-loops,-fpeel-loops,-funswitch-loops")
-//#pragma GCC target("sse,sse2,sse3,ssse3,sse4,sse4.2,popcnt,abm,mmx,avx2,tune=native")
+//#pragma GCC target("sse,sse2,sse3,ssse3,sse4,sse4.2,popcnt,abm,mmx,tune=native")
 //#define ll long long
 //#define ull unsigned long long
 //#define Ahmed_Bahy ios_base::sync_with_stdio(0), cin.tie(0), cout.tie(0);
@@ -179,7 +179,7 @@
 #pragma GCC optimize("-ffast-math")
 #pragma GCC optimize("-funroll-loops")
 #pragma GCC optimize("-funroll-all-loops,-fpeel-loops,-funswitch-loops")
-#pragma GCC target("sse,sse2,sse3,ssse3,sse4,sse4.2,popcnt,abm,mmx,avx2,tune=native")
+#pragma GCC target("sse,sse2,sse3,ssse3,sse4,sse4.2,popcnt,abm,mmx,tune=native")
 #define ll long long
 #define ull unsigned long long
 #define pll pair<ll,ll>

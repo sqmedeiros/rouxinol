@@ -6,7 +6,7 @@ using namespace std;
 //( Experimental Template (x1.2.2) (cf/cebolinha)
 // x1.2.2 - Added loads of const& to the output functions so they're faster
 #pragma GCC optimize("Ofast")
-#pragma GCC target("avx,avx2,fma")
+#pragma GCC target("fma")
  
 template<typename T> using V = vector<T>;
 using ii = pair<int, int>;

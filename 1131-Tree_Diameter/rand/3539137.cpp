@@ -1,6 +1,6 @@
 /* Omhari */
 // #pragma GCC optimize("O3,unroll-loops")
-// #pragma GCC target("avx2,bmi2,lzcnt,popcnt")
+// #pragma GCC target("bmi2,lzcnt,popcnt")
 #include<bits/stdc++.h>
 #include<chrono>
 using namespace std::chrono;

@@ -1,5 +1,5 @@
 #pragma GCC optimize("Ofast")
-//#pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,tune=native")
+//#pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,tune=native")
 #pragma GCC optimize("unroll-loops")
 #pragma GCC optimize("O3")
 #include <bits/stdc++.h>

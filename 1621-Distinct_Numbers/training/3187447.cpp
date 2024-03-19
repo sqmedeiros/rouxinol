@@ -8,7 +8,7 @@ Fenwick tree mein testcase ke andar wali max value size ko add() function mein r
 #define int long long
 #define ll long long
 #pragma GCC optimize("O3") //how good is this? lol
-//#pragma GCC target("avx,avx2,sse,sse2,sse3,sse4,popcnt,fma")
+//#pragma GCC target("sse,sse2,sse3,sse4,popcnt,fma")
 #pragma GCC optimize("unroll-loops")
 using namespace std;
 const int MAXN=2e3+5;

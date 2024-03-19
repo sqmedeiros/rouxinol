@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 #pragma GCC optimize("Ofast,inline,unroll-loops,fast-math")
-#pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt,sse,sse2,sse3,sse4,mmx")
+#pragma GCC target("bmi,bmi2,lzcnt,popcnt,sse,sse2,sse3,sse4,mmx")
  
 #define loop(n) for(int $i = 0; $i < n; $i++)
 #define fast ios_base::sync_with_stdio(false); cin.tie(nullptr)

@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 // #pragma GCC optimize("O3,unroll-loops")
-// #pragma GCC target("avx2,bmi,bmi2,lzcnt")
+// #pragma GCC target("bmi,bmi2,lzcnt")
 using namespace std;
 // mt19937 rng(chrono::steady_clock::now().time_since_epoch().count())
 #define edl '\n'

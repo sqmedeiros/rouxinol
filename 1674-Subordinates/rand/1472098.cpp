@@ -1,5 +1,4 @@
 #include <bits/stdc++.h>
-#pragma GCC target("avx")
 #pragma GCC optimize("Ofast")
 #define reg register
 #define FLF(a, b, c) for(a = b; a <=c; a++)

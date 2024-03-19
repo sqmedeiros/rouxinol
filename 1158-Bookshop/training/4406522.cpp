@@ -1,6 +1,6 @@
 #pragma GCC optimize("O3")
 #pragma GCC optimize("unroll-loops")
-//#pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
+//#pragma GCC target("bmi,bmi2,lzcnt,popcnt")
 #include <algorithm>
 #include <bits/stdc++.h>
 #define ll long long int

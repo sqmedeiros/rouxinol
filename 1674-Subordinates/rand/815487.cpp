@@ -1,7 +1,7 @@
 /*بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيم*/
  
 //#pragma GCC optimize("O3,unroll-loops")
-//#pragma GCC target("avx,avx2,fma")
+//#pragma GCC target("fma")
  
 #include <bits/stdc++.h>
 using namespace std;

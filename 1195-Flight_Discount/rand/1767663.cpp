@@ -3,7 +3,7 @@ using namespace std;
 typedef long long ll;
 #pragma GCC optimize("Ofast")
 #pragma GCC optimize ("unroll-loops")
-#pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,tune=native")
+#pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,tune=native")
 #define mikumywaifu ios_base::sync_with_stdio(0)
 #define misakamywaifu cin.tie(0)
 #define pb push_back

@@ -1,7 +1,6 @@
 #include <bits/stdc++.h>
 #pragma GCC optimize("O3")
 //#pragma GCC target("sse4")
-//#pragma GCC target ("avx2")
 using namespace std;
  
 #define pb push_back

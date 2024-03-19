@@ -23,7 +23,6 @@ const int N = 100013, MOD = 1e9 + 7;
 #define endl '\n'
  
 // #pragma GCC optimize("O3,unroll-loops")
-// #pragma GCC target("avx2")
 // #pragma GCC target("bmi,bmi2,lzcnt,popcnt")
  
 long long binpow(long long a, long long b, long long m)

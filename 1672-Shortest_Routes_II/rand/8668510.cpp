@@ -1,6 +1,6 @@
 #include<bits/stdc++.h>
 #pragma GCC optimize("Ofast,unroll-loops")
-#pragma GCC target("avx,avx2,fma")
+#pragma GCC target("fma")
 using namespace std;
 using namespace chrono;
 #include <ext/pb_ds/assoc_container.hpp>

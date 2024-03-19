@@ -6,12 +6,12 @@
 						 #define n1 "\n"
 						#define st string
 						#define NF st::npos	
-						// #pragma GCC target ("avx2")
+						// 
 						// #pragma GCC optimization ("O3")
 						// #pragma GCC optimization ("unroll-loops")
 						// #pragma optimization_level 3
 						// #pragma GCC optimize("Ofast,no-stack-protector,unroll-loops,fast-math,O3")
-						// #pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,tune=native")
+						// #pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,tune=native")
 						#define unique(a) (a).erase(unique((a).begin(),(a).end()),(a).end())
 						#define rep(a, b) for (long long a = 0; a < (b); ++a)
 						#define rep1(i,n) for(long long i=1;i<=n;i++)

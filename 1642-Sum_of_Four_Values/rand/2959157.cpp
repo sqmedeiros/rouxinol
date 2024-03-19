@@ -14,7 +14,7 @@
 #define cnt_bit __builtin_popcount
 #define debug(...) " [" << #__VA_ARGS__ ": " << (__VA_ARGS__) << "] "
 //#pragma GCC optimize("Ofast")
-//#pragma GCC target("avx,avx2,fma")
+//#pragma GCC target("fma")
 using namespace std;
  
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
