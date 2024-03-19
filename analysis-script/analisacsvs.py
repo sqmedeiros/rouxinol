@@ -112,6 +112,9 @@ for i in range(1,len(arquivos)):
 
     #calcular a média e variancia das nexec execucoes de cada codigo
     nlinhas = len(df)
+    if nlinhas%nexec != 0 :
+        print('Abnormal number of lines. Aborting!')
+        exit()   
     j = 0
     cont = 0
     vnome = []
