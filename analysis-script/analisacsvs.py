@@ -25,6 +25,11 @@ def ajusteax(x,y):
 def mmqcompeso(x,y,stdy):
     return (x*y* 1/(stdy**2)).sum()/(x*x* 1/(stdy**2)).sum()
 
+def checknumberofexecutionsandsolutions(nlinhas,nexec,nsolutions):
+    if nlinhas != nexec*nsolutions:
+            print('\nAbnormal number of lines. Aborting!')
+            exit()   
+
 arquivos = sys.argv
 narq = len(arquivos)
 
@@ -58,8 +63,25 @@ estilos2 = ['.','s','+','d','o','*','^']
 
 nestilo = -1
 
-#quantas execucoes de cada codigo foram feitas
+#quantas execucoes de cada codigo foram feitas. 10 por default
 nexec = 10 
+if '-nexec' in arquivos:
+    nexecindex = arquivos.index('-nexec')
+    nexec = int(arquivos[nexecindex+1])
+    arquivos.pop(nexecindex+1)
+    arquivos.remove('-nexec')
+    narq = narq-2
+
+#quantas solucoes presentes no .csv
+usensolutions = False
+if '-nsolutions' in arquivos:
+    usensolutions = True
+    nsolutionsindex = arquivos.index('-nsolutions')
+    nsolutions = int(arquivos[nsolutionsindex+1])
+    arquivos.pop(nsolutionsindex+1)
+    arquivos.remove('-nsolutions')
+    narq = narq-2
+
 #número de desvios padrao da barra de erro
 nsigma = 2
 
@@ -112,9 +134,8 @@ for i in range(1,len(arquivos)):
 
     #calcular a média e variancia das nexec execucoes de cada codigo
     nlinhas = len(df)
-    if nlinhas%nexec != 0 :
-        print('Abnormal number of lines. Aborting!')
-        exit()   
+    if usensolutions:
+        checknumberofexecutionsandsolutions(nlinhas,nexec,nsolutions)
     j = 0
     cont = 0
     vnome = []
