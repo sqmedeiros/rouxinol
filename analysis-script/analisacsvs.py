@@ -34,7 +34,7 @@ arquivos = sys.argv
 narq = len(arquivos)
 
 if  narq < 2: #o primeiro argumento é o nome do proprio script
-    print('usage: analisacsv file1_machine1.csv file2_machine1.csv ... file1_machine2.csv file2_machine2.csv... ... <-wmmq> <-tsum>')
+    print('usage: analisacsv file1_machine1.csv file2_machine1.csv ... file1_machine2.csv file2_machine2.csv... ... <-wmmq> <-tsum> <-nexec n1> <-nsolustions n2>')
     exit()          
 
 #opcao de usar mmq normal ou com peso (-wmmq)
