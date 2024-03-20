@@ -4,7 +4,7 @@
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
 #pragma GCC optimize ("Ofast,unroll-loops,-ffloat-store")
-#pragma GCC target ("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,avx2,fma")
+#pragma GCC target ("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,fma")
 #define ll long long int
 #define fo(i, n) for (int i = 0; i < n; i++)
 #define cy cout << "YES\n"

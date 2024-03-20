@@ -1,5 +1,5 @@
 #pragma GCC optimize("O3,unroll-loops")
-#pragma GCC target("avx,avx2,bmi,bmi2,popcnt,lzcnt")
+#pragma GCC target("bmi,bmi2,popcnt,lzcnt")
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>

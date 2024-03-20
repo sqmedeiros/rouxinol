@@ -1,7 +1,7 @@
 // it's not about code or how decoratively you write it, it's about mind and what you write, cp is a mind sport
 #ifdef ONLINE_JUDGE
 #pragma GCC optimize("Ofast,unroll-loops")
-#pragma GCC target("avx,avx2,fma")
+#pragma GCC target("fma")
 #include <bits/stdc++.h>
 #define debug(...)
 #else
