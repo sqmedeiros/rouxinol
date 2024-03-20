@@ -2,7 +2,7 @@
 using namespace std;
 #define DEV_MODE_PRAGMAS
 #pragma GCC optimize("O3,unroll-loops")
-//#pragma GCC target("avx2,bmi,bmi2,popcnt,lzcnt,tune=native")
+//#pragma GCC target("bmi,bmi2,popcnt,lzcnt,tune=native")
  
 #include <ext/pb_ds/assoc_container.hpp>
 using namespace __gnu_pbds;

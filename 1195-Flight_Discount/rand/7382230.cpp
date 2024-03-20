@@ -6,12 +6,12 @@ using namespace std;
 // Optimizations
 // #pragma GCC optimize("PUSSY CHAT")
  #pragma GCC optimize("O3,unroll-loops")
-#pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
+#pragma GCC target("bmi,bmi2,lzcnt,popcnt")
 #pragma GCC optimize("Ofast,unroll-loops")
-#pragma GCC target("avx2,tune=native")
+#pragma GCC target("tune=native")
 #pragma GCC optimize ("O3")
 #pragma GCC optimize ("unroll-loops")
-#pragma GCC target ("avx2")
+
 #pragma GCC optimize ("Os")
 #pragma GCC optimize("Ofast")
 #pragma GCC optimize("fast-math")

@@ -8,7 +8,7 @@ using namespace std;
 //    #pragma GCC optimize("fast-math")
 //    #pragma GCC optimize("Ofast")
 //    #pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx")
-//    #pragma GCC target("avx,avx2,fma")
+//    #pragma GCC target("fma")
 //    #pragma GCC optimization ("unroll-loops")
 //#define LOCAL
 #define sim template < class c

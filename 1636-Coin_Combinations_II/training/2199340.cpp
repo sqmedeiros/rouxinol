@@ -1,5 +1,4 @@
 #pragma GCC optimize ("O3")
-//#pragma GCC target ("avx,avx2")
 #pragma GCC optimize ("-fno-stack-protector")
 #include <iostream>
 #include <vector>

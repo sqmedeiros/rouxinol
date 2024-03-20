@@ -1,6 +1,6 @@
 // Faster
 #pragma GCC optimize("Ofast") 
-//#pragma GCC target("avx,avx2,fma")
+//#pragma GCC target("fma")
  
 #include <fstream>
 #include <iostream>

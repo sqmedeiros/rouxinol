@@ -4,7 +4,7 @@
 #include <sys/resource.h>
 #endif
 #pragma GCC optimize("-O3")
-// #pragma GCC target("avx,avx2,fma")
+// #pragma GCC target("fma")
 using namespace std;
 #ifdef TRACE
 #include "/Users/shashankagrawal/Desktop/CP/trace.h"

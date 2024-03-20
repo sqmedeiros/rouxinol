@@ -16,7 +16,7 @@
 #include <unordered_set>
  
 #pragma GCC optimize("Ofast")
-#pragma GCC target("fma,sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,avx2,tune=native")
+#pragma GCC target("fma,sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,tune=native")
 #pragma GCC optimize("unroll-loops")
  
 #define ll long long

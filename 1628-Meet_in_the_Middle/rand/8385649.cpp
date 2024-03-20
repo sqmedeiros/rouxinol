@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 #pragma GCC optimize("O3,unroll-loops")
-//#pragma GCC target("avx,avx2,fma,bmi,bmi2")
+//#pragma GCC target("fma,bmi,bmi2")
 using namespace std;
 typedef long long ll;
  

@@ -2,7 +2,7 @@
 using namespace std;
  
 //#pragma GCC optimize("O3,unroll-loops")
-//#pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
+//#pragma GCC target("bmi,bmi2,lzcnt,popcnt")
 typedef long long ll;
 typedef vector<int> vi;
 typedef pair<int, int> pi;

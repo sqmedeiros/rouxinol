@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 // Uncomment them for optimisations
 // #pragma GCC optimize("Ofast")
-// #pragma GCC target("avx,avx2,fma")
+// #pragma GCC target("fma")
 #define GET_MACRO(_1, _2, _3, _4, NAME, ...) NAME
 #define range(...)                         \
     GET_MACRO(__VA_ARGS__, r4, r3, r2, r1) \

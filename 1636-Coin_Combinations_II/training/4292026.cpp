@@ -1,8 +1,7 @@
-/*
+    /*
     # Enjoy the journey #
 */
 #pragma GCC optimize("O3", "unroll-loops")
-//#pragma GCC target("avx2", "popcnt")
 #include <string>
 #include <bits/functexcept.h>
 #include <iosfwd>

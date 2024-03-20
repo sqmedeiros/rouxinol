@@ -1,7 +1,7 @@
 #include<bits/stdc++.h>
 #pragma GCC optimize("Ofast")
 #pragma GCC optimize ("unroll-loops")
-//#pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,tune=native")
+//#pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,tune=native")
 #define io_o() ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
 #define fst first
 #define scd second

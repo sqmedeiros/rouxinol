@@ -1,6 +1,5 @@
 // Copyright © 2022 Youngmin Park. All rights reserved.
 //#pragma GCC optimize("O3")
-//#pragma GCC target("avx2")
 #include <bits/stdc++.h>
 using namespace std;
  

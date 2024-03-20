@@ -16,7 +16,6 @@ using namespace std;
  
 #ifdef ONLINE_JUDGE
 #pragma GCC optimize("Ofast")
-//#pragma GCC target("avx2")
 #endif
  
 //#include <ext/pb_ds/assoc_container.hpp>
