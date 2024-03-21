@@ -391,7 +391,7 @@ for i in range(len(tempomedio)):
     file.write("\t")
 print('')
 file.write("\n")
-if  narq != 2: #so calcula matrizes e busca outliers se recebido mais de um arquivo
+if  narq != 2 and narq%2 == 1 : #so calcula matrizes e busca outliers se recebido mais de um arquivo e se o numero de arquivos for impar (numero de .vsc par)
     """ print('\n\nmatriz de relação de tempo medio')
     print('informa o quanto a solucao da linha i é mais rapida que a solucao da coluna j\n')
     file.write('\n\nmatriz de relação de tempo medio')
