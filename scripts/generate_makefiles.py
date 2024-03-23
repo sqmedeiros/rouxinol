@@ -60,23 +60,21 @@ def generateEntryline(entries):
   line = line + "\n"
   return line
 
-def generateMakefileText(mydir,experiment):
-  dataAtual = datetime.now()
-  dataFormatada = dataAtual.strftime("%d/%m/%Y %H:%M")
-  data = "export PROBLEM = " + mydir + "-" + experiment + "-" + dataFormatada +  "\n"
-  data  = data + "export CPPFLAGS = -DONLINE_JUDGE -std=c++17 -O2\n"
-  data = data + "export OUTPUT = > /dev/null 2>&1\n"
+def generateMakefileText(mydir,experiment,dataFormatada):
+  texto = "export PROBLEM = " + mydir + "-" + experiment + "-" + dataFormatada +  "\n"
+  texto  = texto + "export CPPFLAGS = -DONLINE_JUDGE -std=c++17 -O2\n"
+  texto = texto + "export OUTPUT = > /dev/null 2>&1\n"
   entries = getEntries()
   entryline  = generateEntryline(entries)
-  data = data + entryline
-  data = data + "all:\n\t+$(MAKE) -C " + experiment + "\n"
-  data = data + "clean:\n\trm rand/*.exe training/*.exe control/*.exe\n"
-  return data
+  texto = texto + entryline
+  texto = texto + "all:\n\t+$(MAKE) -C " + experiment + "\n"
+  texto = texto + "clean:\n\trm rand/*.exe training/*.exe control/*.exe\n"
+  return texto
 
-def createMakefile(mydir,experiment):
-  data = generateMakefileText(mydir,experiment)
+def createMakefile(mydir,experiment,dataFormatada):
+  texto = generateMakefileText(mydir,experiment,dataFormatada)
   with open("Makefile","w") as f:
-    f.write(data) # write the data back
+    f.write(texto) # write the data back
     f.truncate() # set the file size to the current size
 
 def checkArguments(narq):
@@ -85,18 +83,19 @@ def checkArguments(narq):
     exit()  
 
 
-
 arquivos = sys.argv
 narq = len(arquivos)
 
 checkArguments(narq)
 
 experiment = arquivos[1]
+dataAtual = datetime.now()
+dataFormatada = dataAtual.strftime("%d-%m-%Y-%H-%M")
 
 write_log("Generating Makefiles")
 for mydir in dirs:
   write_log("Working on " + mydir)
   os.chdir(mydir)
-  createMakefile(mydir,experiment)
+  createMakefile(mydir,experiment,dataFormatada)
   os.chdir(prevDir)
 write_log("Makefiles Complete")
