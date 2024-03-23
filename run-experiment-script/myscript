@@ -19,7 +19,7 @@
 case "$1" in
   start)
     echo "Running experiment..."
-    cd /home/sergio/energy-profile
+    cd /home/sergio/rouxinol
     python3 run-experiment-script/script.py
     ;;
   stop)
