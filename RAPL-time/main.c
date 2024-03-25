@@ -10,7 +10,7 @@
 #include "rapl.h"
 
 #define RUNTIME 1
-#define NRUNS 1
+#define NRUNS 10
 
 typedef struct Time {
 	int real;
