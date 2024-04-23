@@ -60,8 +60,8 @@ def generateEntryline(entries):
   line = line + "\n"
   return line
 
-def generateMakefileText(mydir,experiment,dataFormatada):
-  texto = "export PROBLEM = " + mydir + "-" + experiment + "-" + dataFormatada +  "\n"
+def generateMakefileText(mydir,experiment,dataFormatada,machine):
+  texto = "export PROBLEM = " + mydir + "-" + experiment + "-" + dataFormatada + machine +  "\n"
   texto  = texto + "export CPPFLAGS = -DONLINE_JUDGE -std=c++17 -O2\n"
   texto = texto + "export OUTPUT = > /dev/null 2>&1\n"
   entries = getEntries()
@@ -71,24 +71,33 @@ def generateMakefileText(mydir,experiment,dataFormatada):
   texto = texto + "clean:\n\trm rand/*.exe training/*.exe control/*.exe\n"
   return texto
 
-def createMakefile(mydir,experiment,dataFormatada):
-  texto = generateMakefileText(mydir,experiment,dataFormatada)
+def createMakefile(mydir,experiment,dataFormatada, machine):
+  texto = generateMakefileText(mydir,experiment,dataFormatada,machine)
   with open("Makefile","w") as f:
     f.write(texto) # write the data back
     f.truncate() # set the file size to the current size
 
-def checkArguments(narq):
+def checkArguments(arquivos):
+  narq = len(arquivos)
   if  narq < 2: #o primeiro argumento é o nome do proprio script
-    print('usage: generate_makefile experiment')
+    print('usage: generate_makefile experiment <machine>')
     exit()  
+
+def  getnames(arquivos):
+  narq = len(arquivos)
+  experiment = arquivos[1]
+  machine = ''
+  if narq == 3:
+    machine = "-" + arquivos[2]
+  return experiment, machine
 
 
 arquivos = sys.argv
-narq = len(arquivos)
 
-checkArguments(narq)
+checkArguments(arquivos)
 
-experiment = arquivos[1]
+experiment, machine = getnames(arquivos)
+
 dataAtual = datetime.now()
 dataFormatada = dataAtual.strftime("%d-%m-%Y-%H-%M")
 
@@ -96,6 +105,6 @@ write_log("Generating Makefiles")
 for mydir in dirs:
   write_log("Working on " + mydir)
   os.chdir(mydir)
-  createMakefile(mydir,experiment,dataFormatada)
+  createMakefile(mydir,experiment,dataFormatada,machine)
   os.chdir(prevDir)
 write_log("Makefiles Complete")
