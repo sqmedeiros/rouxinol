@@ -92,7 +92,8 @@ arquivoscurtos = []
 for i in range(1,len(arquivos)):
     if arquivos[i][0:2] == '.\\':   #remove .\ do inicio dos argumentos caso exista
         arquivos[i] = arquivos[i][2:len(arquivos[i])]
-    arquivoscurtos.append(arquivos[i][5:len(arquivos[i])-4])
+    #arquivoscurtos.append(arquivos[i][5:len(arquivos[i])-4])
+    arquivoscurtos.append(arquivos[i][0:4])
 
 print(arquivoscurtos)
 try:
