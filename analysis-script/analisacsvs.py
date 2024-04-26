@@ -163,11 +163,14 @@ for i in range(1,len(arquivos)):
                 print("\n\n\nDifference between times seem too large in " + df.iloc[j,0] + ". Max = " + str(difft.max()) + ". Number of occurences: " + str(sum(i > 10 for i in difft)) + "\n\n\n\n")
                 file.write("\n\n\nDifference between times seem too large in " + df.iloc[j,0] + ". Max = " + str(difft.max()) + ". Number of occurences: " + str(sum(i > 10 for i in difft)) + "\n\n\n\n")
                 
-        #ordena de acordo com o tempo para remover os dois extremos
+        #ordena de acordo com o consumo (pkg) para remover os extremos (10% do nexec)
         dt = {'pkg': pkg, 'tempo':t, 'temposoma':tsomausersys}
         dtemp = pandas.DataFrame(data=dt)
-        dtemp = dtemp.sort_values('tempo')
-        dtemp.drop(labels=[0, len(dtemp)-1], axis=0, inplace=True)
+        dtemp = dtemp.sort_values('pkg')
+        listprimeiros = list(range(0,int(nexec*0.1)))
+        listultimos = list(range(len(dtemp)-int(nexec*0.1),len(dtemp)))
+        listtodos = listprimeiros + listultimos
+        dtemp.drop(labels=listtodos, axis=0, inplace=True)
         
         pkg = np.array(dtemp.iloc[:,0])
         t = np.array(dtemp.iloc[:,1])
