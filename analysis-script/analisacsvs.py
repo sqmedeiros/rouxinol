@@ -167,6 +167,8 @@ for i in range(1,len(arquivos)):
         dt = {'pkg': pkg, 'tempo':t, 'temposoma':tsomausersys}
         dtemp = pandas.DataFrame(data=dt)
         dtemp = dtemp.sort_values('pkg')
+        #resetar indices
+        dtemp = dtemp.reset_index(drop=True)
         listprimeiros = list(range(0,int(nexec*0.1)))
         listultimos = list(range(len(dtemp)-int(nexec*0.1),len(dtemp)))
         listtodos = listprimeiros + listultimos
