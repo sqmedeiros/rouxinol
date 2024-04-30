@@ -30,6 +30,21 @@ def checknumberofexecutionsandsolutions(nlinhas,nexec,nsolutions):
             print('\nAbnormal number of lines. Aborting!')
             exit()   
 
+def findnumberofexec(df):
+    namefirstsolution = df.iloc[0,0]
+    print(namefirstsolution)
+    cont = 1
+    while namefirstsolution == df.iloc[cont,0]:
+        cont = cont + 1
+    print('Detected ' + str(cont) + ' executions for each code')
+    return cont
+
+def OrderbynameandComputenexec(df,computenexec,nexec):
+    df = df.sort_values('codigo',ignore_index=True) #ignore index para poder refazer os indices
+    if computenexec:
+        nexec = findnumberofexec(df)
+    return df, nexec
+
 arquivos = sys.argv
 narq = len(arquivos)
 
@@ -65,12 +80,14 @@ nestilo = -1
 
 #quantas execucoes de cada codigo foram feitas. 10 por default
 nexec = 10 
+computenexec = True #achar automaticamente o numero de execucoes
 if '-nexec' in arquivos:
     nexecindex = arquivos.index('-nexec')
     nexec = int(arquivos[nexecindex+1])
     arquivos.pop(nexecindex+1)
     arquivos.remove('-nexec')
     narq = narq-2
+    computenexec = False
 
 #quantas solucoes presentes no .csv
 usensolutions = False
@@ -132,6 +149,8 @@ for i in range(1,len(arquivos)):
     else:
         df = pandas.read_csv(arquivos[i],names=['codigo', 'pkg','cpu', 'n1','n2','tempo','tuser','tsys'])
         print('mais colunas de tempo detectadas')
+
+    df, nexec = OrderbynameandComputenexec(df,computenexec,nexec)
 
     #calcular a média e variancia das nexec execucoes de cada codigo
     nlinhas = len(df)
@@ -199,7 +218,9 @@ for i in range(1,len(arquivos)):
     
     print('salvando resumo de  ',arquivos[i])
 
-    d = {'nome': vnome, 'consumo_medio': vmconsumo, 'desvio_consumo':vdconsumo, 'tempo_medio':vmtempo, 'desvio_tempo':vdtempo, 'temposoma_medio':vmtsoma, 'desvio_temposoma':vdtsoma}
+    slopeindividual = vmconsumo/vmtempo
+    
+    d = {'nome': vnome, 'consumo_medio': vmconsumo, 'desvio_consumo':vdconsumo, 'tempo_medio':vmtempo, 'desvio_tempo':vdtempo, 'temposoma_medio':vmtsoma, 'desvio_temposoma':vdtsoma, 'slpe_individual': slopeindividual}
     ds = pandas.DataFrame(data=d)
     ds = ds.sort_values('nome')
     ds.to_csv('analysis_results/resumo' + arquivos[i])
