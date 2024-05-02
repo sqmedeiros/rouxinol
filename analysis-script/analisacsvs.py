@@ -32,7 +32,6 @@ def checknumberofexecutionsandsolutions(nlinhas,nexec,nsolutions):
 
 def findnumberofexec(df):
     namefirstsolution = df.iloc[0,0]
-    print(namefirstsolution)
     cont = 1
     while namefirstsolution == df.iloc[cont,0]:
         cont = cont + 1
@@ -220,7 +219,7 @@ for i in range(1,len(arquivos)):
 
     slopeindividual = vmconsumo/vmtempo
     
-    d = {'nome': vnome, 'consumo_medio': vmconsumo, 'desvio_consumo':vdconsumo, 'tempo_medio':vmtempo, 'desvio_tempo':vdtempo, 'temposoma_medio':vmtsoma, 'desvio_temposoma':vdtsoma, 'slpe_individual': slopeindividual}
+    d = {'nome': vnome, 'consumo_medio': vmconsumo, 'desvio_consumo':vdconsumo, 'tempo_medio':vmtempo, 'desvio_tempo':vdtempo, 'temposoma_medio':vmtsoma, 'desvio_temposoma':vdtsoma, 'slope_individual': slopeindividual}
     ds = pandas.DataFrame(data=d)
     ds = ds.sort_values('nome')
     ds.to_csv('analysis_results/resumo' + arquivos[i])
