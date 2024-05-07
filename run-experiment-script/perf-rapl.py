@@ -4,7 +4,7 @@ import sys
 import csv
 from datetime import datetime
 
-NRUNS = 1
+NRUNS = 10
 idx_pkg = 0
 idx_core = 1
 idx_ram = 2
@@ -82,11 +82,13 @@ csv_entry = sys.argv[4]
 
 tests = sys.argv[5].strip().split(" ")
                #pkg, ram, cpu_time  
-measurements = [  0,    0,   0]
-for test in tests:
-  print(f"Testing with {test}")
-  run_test(exe_prog, output, csv_file, test, measurements)
-#name   #pkg  #core #ram  #gpu #time
-entry_data = [ csv_entry, str(measurements[0] / 60), "", str(measurements[1] / 60), "", str(measurements[2] / 1000000) ] 
-make_new_csv_entry(csv_file, entry_data)   
+
+for i in range(NRUNS):
+  measurements = [  0,    0,   0]
+  for test in tests:
+    print(f"Testing with {test}")
+    run_test(exe_prog, output, csv_file, test, measurements)
+  #name   #pkg  #core #ram  #gpu #time
+  entry_data = [ csv_entry, str(measurements[0] / 60), "", str(measurements[1] / 60), "", str(measurements[2] / 1000000) ] 
+  make_new_csv_entry(csv_file, entry_data)   
 
