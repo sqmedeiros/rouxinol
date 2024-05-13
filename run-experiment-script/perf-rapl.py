@@ -9,6 +9,7 @@ idx_pkg = 0
 idx_core = 1
 idx_ram = 2
 idx_gpu = 3
+perf_flag_prefix = "power/energy-"
 
 # perf power options
 # power/energy-cores/, power/energy-gpu/, power/energy-pkg/, power/energy-psys/, power/energy-ram/
@@ -48,23 +49,30 @@ def make_new_csv_entry (csv_file, entry_data):
      f.write("\n")
 
 
+def is_perf_measurement (l):
+  return len(l) == 7 and perf_flag_prefix in l[2]
+
+
 def run_test (prog, output, csv_file, test_file, measurements):
   tmp_output = "saida.csv"
   if os.path.isfile(tmp_output):
     os.remove(tmp_output)
 
   power_flag = set_perf_power()
-  os.system(f"perf stat -x ';' -e {power_flag} {prog} {test_file} {output} 2>>{tmp_output}")
+  cmd_test = f"perf stat -x ';' -e {power_flag} {prog} {test_file} {output} 2>>{tmp_output}"
+  print(f"Executing {cmd_test}")
+  os.system(cmd_test)
 
   with open(tmp_output, newline='') as csvfile: 
     print("Li csv")
     reader = csv.reader(csvfile, delimiter=';')
     i = 0
     for row in reader:
-      measurements[i] += float(row[0].replace(",", "."))
-      if i == 0:
-        measurements[2] += int(row[3])
-      i = i + 1
+      if is_perf_measurement(row):
+        measurements[i] += float(row[0].replace(",", "."))
+        if i == 0:
+          measurements[2] += int(row[3])
+        i = i + 1
   
   print(f"End measurement {measurements}")
     
@@ -77,7 +85,7 @@ print(sys.argv[0])
 
 exe_prog = sys.argv[1]
 output = sys.argv[2]
-csv_file = sys.argv[3] 
+csv_file = sys.argv[3] + ".csv"
 csv_entry = sys.argv[4]
 
 tests = sys.argv[5].strip().split(" ")
@@ -88,7 +96,15 @@ for i in range(NRUNS):
   for test in tests:
     print(f"Testing with {test}")
     run_test(exe_prog, output, csv_file, test, measurements)
+  pkg_measure = measurements[0]
+  ram_measure = measurements[1]
+  time_measure = measurements[2]  # time in nanoseconds (10^9)
+
+  time_measure = time_measure / pow(10, 6)  # Nanosecons -> Miliseconds
+  pkg_measure = pkg_measure / (time_measure / pow(10, 3)) # From Joules to Watts
+  ram_measure = ram_measure / (time_measure / pow(10, 3)) # From Joules to Watts
+
   #name   #pkg  #core #ram  #gpu #time
-  entry_data = [ csv_entry, str(measurements[0] / 60), "", str(measurements[1] / 60), "", str(measurements[2] / 1000000) ] 
+  entry_data = [ csv_entry, f"{pkg_measure:7.3f}", "", f"{ram_measure:6.3f}", "", f"{time_measure:5.0f}" ]
   make_new_csv_entry(csv_file, entry_data)   
 
