@@ -43,6 +43,7 @@ dirs = [
 logDir = "log/"
 logFile = "myLog.txt"
 prevDir = "../"
+makefileDir = 'scripts/'
 
 def write_log (msg):
   print(msg)
@@ -91,6 +92,8 @@ def  getnames(arquivos):
     machine = "-" + arquivos[2]
   return experiment, machine
 
+def copyMakefilesubdir(experiment, mydir):
+  os.system('cp ' + makefileDir + 'Makefile-perf ' + mydir + '/' + experiment + '/Makefile')
 
 arquivos = sys.argv
 
@@ -107,4 +110,5 @@ for mydir in dirs:
   os.chdir(mydir)
   createMakefile(mydir,experiment,dataFormatada,machine)
   os.chdir(prevDir)
+  copyMakefilesubdir(experiment, mydir)
 write_log("Makefiles Complete")
