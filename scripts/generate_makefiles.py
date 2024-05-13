@@ -62,10 +62,13 @@ def generateEntryline(entries):
   line = line + "\n"
   return line
 
-def generateMakefileText(mydir,experiment,dataFormatada,machine):
+def generateMakefileText(mydir,experiment,dataFormatada,machine,useperf):
   texto = "export PROBLEM = " + mydir + "-" + experiment + "-" + dataFormatada + machine +  "\n"
   texto  = texto + "export CPPFLAGS = -DONLINE_JUDGE -std=c++17 -O2\n"
-  texto = texto + "export OUTPUT = > /dev/null 2>&1\n"
+  if useperf:
+    texto = texto + "export OUTPUT = 2>&1 > /dev/null\n"
+  else:
+    texto = texto + "export OUTPUT = > /dev/null 2>&1\n"
   entries = getEntries()
   entryline  = generateEntryline(entries)
   texto = texto + entryline
@@ -73,8 +76,8 @@ def generateMakefileText(mydir,experiment,dataFormatada,machine):
   texto = texto + "clean:\n\trm rand/*.exe training/*.exe control/*.exe\n"
   return texto
 
-def createMakefile(mydir,experiment,dataFormatada, machine):
-  texto = generateMakefileText(mydir,experiment,dataFormatada,machine)
+def createMakefile(mydir,experiment,dataFormatada, machine,useperf):
+  texto = generateMakefileText(mydir,experiment,dataFormatada,machine,useperf)
   with open("Makefile","w") as f:
     f.write(texto) # write the data back
     f.truncate() # set the file size to the current size
@@ -82,34 +85,48 @@ def createMakefile(mydir,experiment,dataFormatada, machine):
 def checkArguments(arquivos):
   narq = len(arquivos)
   if  narq < 2: #o primeiro argumento é o nome do proprio script
-    print('usage: generate_makefile experiment <machine>')
+    print('usage: generate_makefile experiment <machine> <-perf>')
     exit()  
 
 def  getnames(arquivos):
+  useperf = False
+  if '-perf' in arquivos:
+    useperf = True
+    arquivos.remove('-perf')
+    
   narq = len(arquivos)
   experiment = arquivos[1]
   machine = ''
   if narq == 3:
     machine = "-" + arquivos[2]
-  return experiment, machine
+  return experiment, machine, useperf
 
-def copyMakefilesubdir(experiment, mydir):
-  os.system('cp ' + makefileDir + 'Makefile-RAPL ' + mydir + '/' + experiment + '/Makefile')
+def copyMakefilesubdir(experiment, mydir, useperf):
+  if useperf:
+    os.system('cp ' + makefileDir + 'Makefile-perf ' + mydir + '/' + experiment + '/Makefile')
+  else:
+    os.system('cp ' + makefileDir + 'Makefile-RAPL ' + mydir + '/' + experiment + '/Makefile')
 
 arquivos = sys.argv
 
 checkArguments(arquivos)
 
-experiment, machine = getnames(arquivos)
+experiment, machine, useperf = getnames(arquivos)
 
 dataAtual = datetime.now()
 dataFormatada = dataAtual.strftime("%d-%m-%Y-%H-%M")
 
 write_log("Generating Makefiles")
+if useperf:
+  print('Measurements with PERF')
+else:
+  print('Measurements with RAPL')
+
+
 for mydir in dirs:
   write_log("Working on " + mydir)
   os.chdir(mydir)
-  createMakefile(mydir,experiment,dataFormatada,machine)
+  createMakefile(mydir,experiment,dataFormatada,machine,useperf)
   os.chdir(prevDir)
-  copyMakefilesubdir(experiment, mydir)
+  copyMakefilesubdir(experiment, mydir, useperf)
 write_log("Makefiles Complete")
