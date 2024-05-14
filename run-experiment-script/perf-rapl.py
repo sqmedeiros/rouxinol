@@ -29,7 +29,9 @@ perf_flags = [ "power/energy-pkg/",
                
 
 def set_perf_power ():
-  perf_power = []
+  # the program being evaluated may print "cerr". The first "power/energy-"
+  # in the ouptput file just indicates the beginning of the perf measurements
+  perf_power = [ perf_flags[0]]
   for i, value in enumerate(perf_measurement):
     if value:
       perf_power.append(perf_flags[i])
@@ -50,7 +52,10 @@ def make_new_csv_entry (csv_file, entry_data):
 
 
 def is_perf_measurement (l):
-  return len(l) == 7 and perf_flag_prefix in l[2]
+  for x in l:
+    if perf_flag_prefix in l[2]:
+      return True
+  return False
 
 
 def run_test (prog, output, csv_file, test_file, measurements):
@@ -67,13 +72,16 @@ def run_test (prog, output, csv_file, test_file, measurements):
     print("Li csv")
     reader = csv.reader(csvfile, delimiter=';')
     i = 0
+    begin_measurement = False
     for row in reader:
-      if is_perf_measurement(row):
+      if begin_measurement:
         measurements[i] += float(row[0].replace(",", "."))
         if i == 0:
           measurements[2] += int(row[3])
         i = i + 1
-  
+      elif is_perf_measurement(row):
+        begin_measurement = True
+
   print(f"End measurement {measurements}")
     
 
