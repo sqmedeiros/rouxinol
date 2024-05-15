@@ -53,7 +53,7 @@ def make_new_csv_entry (csv_file, entry_data):
 
 def is_perf_measurement (l):
   for x in l:
-    if perf_flag_prefix in l[2]:
+    if perf_flag_prefix in x:
       return True
   return False
 
