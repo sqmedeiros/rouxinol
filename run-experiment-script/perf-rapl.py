@@ -43,8 +43,7 @@ def set_perf_power ():
 # 1 Name ; 2 RAPL Pkg ; 3 RAPL Cores ; 4 RAPL RAM ; 5 RAPL GPU ; 6 CPU Time
 def make_new_csv_entry (csv_file, entry_data):  
     
-  print("Nova medição")
-  print(', '.join(entry_data))
+  print(f"Nova medição {', '.join(entry_data)}\n")
   
   with open(csv_file, "a+") as f:
      f.write(", ".join(entry_data))
@@ -69,7 +68,6 @@ def run_test (prog, output, csv_file, test_file, measurements):
   os.system(cmd_test)
 
   with open(tmp_output, newline='') as csvfile: 
-    print("Li csv")
     reader = csv.reader(csvfile, delimiter=';')
     i = 0
     begin_measurement = False
@@ -82,7 +80,7 @@ def run_test (prog, output, csv_file, test_file, measurements):
       elif is_perf_measurement(row):
         begin_measurement = True
 
-  print(f"End measurement {measurements}")
+  print(f"Finished test: {measurements}")
     
 
 print(sys.argv)
@@ -102,17 +100,14 @@ tests = sys.argv[5].strip().split(" ")
 for i in range(NRUNS):
   measurements = [  0,    0,   0]
   for test in tests:
-    print(f"Testing with {test}")
     run_test(exe_prog, output, csv_file, test, measurements)
   pkg_measure = measurements[0]
   ram_measure = measurements[1]
   time_measure = measurements[2]  # time in nanoseconds (10^9)
 
   time_measure = time_measure / pow(10, 6)  # Nanosecons -> Miliseconds
-  pkg_measure = pkg_measure / (time_measure / pow(10, 3)) # From Joules to Watts
-  ram_measure = ram_measure / (time_measure / pow(10, 3)) # From Joules to Watts
 
   #name   #pkg  #core #ram  #gpu #time
-  entry_data = [ csv_entry, f"{pkg_measure:7.3f}", "", f"{ram_measure:6.3f}", "", f"{time_measure:5.0f}" ]
+  entry_data = [ csv_entry, f"{pkg_measure:7.2f}", "", f"{ram_measure:6.2f}", "", f"{time_measure:5.0f}" ]
   make_new_csv_entry(csv_file, entry_data)   
 
