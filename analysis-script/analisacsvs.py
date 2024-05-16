@@ -70,6 +70,12 @@ if '-tclock' in arquivos:
     arquivos.remove('-tclock')
     narq = narq-1
 
+perf = False
+if '-perf' in arquivos:
+    perf = True
+    arquivos.remove('-perf')
+    narq = narq-1
+
 
 cores = ['b','r','g','m','k','c','y']
 estilos = ['-','--','-.',':','-','--','-.']
@@ -170,6 +176,9 @@ for i in range(1,len(arquivos)):
     while j < nlinhas:
         vnome.append(df.iloc[j,0])
         pkg = np.array(df.iloc[j:j+nexec,1])
+        ramperf = np.array(df.iloc[j:j+nexec,3])
+        if perf:
+            pkg = pkg + ramperf
         t = np.array(df.iloc[j:j+nexec,5])
         tsomausersys = np.zeros(nexec)
         if ncolunas == 8:
