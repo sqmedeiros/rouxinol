@@ -4,6 +4,8 @@ import sys
 import csv
 from datetime import datetime
 
+csv.field_size_limit(sys.maxsize)
+
 NRUNS = 10
 idx_pkg = 0
 idx_core = 1
