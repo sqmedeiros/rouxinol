@@ -44,6 +44,13 @@ def OrderbynameandComputenexec(df,computenexec,nexec):
         nexec = findnumberofexec(df)
     return df, nexec
 
+def saveSlopesCsv(slopes, arquivoscurtos):
+    d = {'nome': arquivoscurtos, 'slopes': slopes}
+    ds = pandas.DataFrame(data=d)
+    ds = ds.sort_values('nome')
+    ds.to_csv('analysis_results/slopes.csv', index = False)
+
+
 arquivos = sys.argv
 narq = len(arquivos)
 
@@ -388,6 +395,7 @@ for i in range(len(tempomedio)):
     print(slopes[i],end='\t')   
     file.write("{:.5f}".format(slopes[i]))
     file.write("\t")
+saveSlopesCsv(slopes, arquivoscurtos)
 print('\ntempos medios das solucoes:')
 file.write('\ntempos medios das solucoes:\n')
 for i in range(len(tempomedio)):
