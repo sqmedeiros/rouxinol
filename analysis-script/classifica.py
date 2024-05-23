@@ -25,7 +25,7 @@ def classificaGeral(slopes1, slopes2):
     n = slopes1.size
     nacertos = np.zeros(n)
     vacertos = np.zeros((n, n))
-    for i in range(0,n):
+    for i in range(n):
         nacertos[i], vacertos[i,:] = classificaN(slopes1, slopes2, i)
     return nacertos, vacertos
 
@@ -53,7 +53,19 @@ def grafico(nacertos):
     n = nacertos.size
     x = range(0,n)
     plt.plot(x,nacertos)
+    plt.grid()
+    plt.yticks(np.arange(0, n+1, 1))
     plt.show()
+
+def imprimeaceretoproblemas(vacertos, nomes, ax):
+    print('numero de acertos em funcao de n e probelmas classificados corretamente a partir deste passo')
+
+    for i in range(1, len(nomes)):
+        #np.set_printoptions(threshold=np.inf)
+        classified = nomes[np.logical_and(vacertos[i,:]==1, vacertos[i,:]!= vacertos[i-1,:])]
+        print(str(i) + ': ' + str(int(nacertos[i])) + ' ' + str(classified))
+        if i > 15 and classified.size > 0   :
+            ax.text(i,nacertos[i], str(classified))
 
 arquivos = sys.argv
 narq = len(arquivos)
@@ -63,7 +75,10 @@ arq2 = arquivos[2]
 
 slopes1, slopes2, nomes = carregacsvs(arq1, arq2)
 nacertos, vacertos = classificaGeral(slopes1, slopes2)
-print(nacertos)
+
+fig = plt.figure()
+ax = fig.add_subplot()
+
+imprimeaceretoproblemas(vacertos, nomes, ax)
 grafico(nacertos)
-np.set_printoptions(threshold=np.inf)
-print(vacertos)
+
