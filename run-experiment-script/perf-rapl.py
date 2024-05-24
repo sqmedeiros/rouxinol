@@ -7,44 +7,30 @@ from datetime import datetime
 csv.field_size_limit(sys.maxsize)
 
 NRUNS = 10
-idx_pkg = 0
-idx_core = 1
-idx_ram = 2
-idx_gpu = 3
 perf_flag_prefix = "power/energy-"
 
 # perf power options
 # power/energy-cores/, power/energy-gpu/, power/energy-pkg/, power/energy-psys/, power/energy-ram/
 
-#edit True/False according to the machine                    
-perf_measurement = [ True,   # Pkg
-                     False,  # Core
-                     True,   # DRAM
-                     False,  # GPU
-]
-
-perf_flags = [ "power/energy-pkg/",
-               "power/energy-cores/",
-               "power/energy-ram/",
-               "power/energy-gpu/"
-]
-               
-
-def set_perf_power ():
-  # the program being evaluated may print "cerr". The first "power/energy-"
-  # in the ouptput file just indicates the beginning of the perf measurements
-  perf_power = [ perf_flags[0]]
-  for i, value in enumerate(perf_measurement):
-    if value:
-      perf_power.append(perf_flags[i])
-
-  return ",".join(perf_power)
+flag_pkg = "power/energy-pkg/"
+flag_ram = "power/energy-ram/"
+flag_user_time = "user_time"
+flag_sys_time = "system_time"
 
 
-# A CSV entry should have 6 columns
-# 1 Name ; 2 RAPL Pkg ; 3 RAPL Cores ; 4 RAPL RAM ; 5 RAPL GPU ; 6 CPU Time
+def get_perf_flag ():
+  #using "all_cpus" otherwise perf does not return measurements related to the energy flags
+  perf_flag = f"{flag_pkg},{flag_ram},{flag_user_time},{flag_sys_time} --all-cpus"
+  #adding flag_pkg again to indicate the beginning of the measurements
+  perf_flag = f"{flag_pkg},{perf_flag}"
+  print(f"perf_flag = {perf_flag}")
+  return perf_flag
+
+
+# A CSV entry should have 8 columns
+# 1 Name ; 2 RAPL Pkg ; 3 RAPL Cores ; 4 RAPL RAM ; 5 RAPL GPU ; 6 Total Time; 7 User Time; 8 Sys Time
 def make_new_csv_entry (csv_file, entry_data):  
-    
+
   print(f"Nova medição {', '.join(entry_data)}\n")
   
   with open(csv_file, "a+") as f:
@@ -59,31 +45,49 @@ def is_perf_measurement (l):
   return False
 
 
+def get_measurements (reader, measurements):
+  row = next(reader)
+  pkg = float(row[0].replace(",", "."))
+  measurements["pkg"] += pkg
+
+  # uses the time associated with the first measure as the clock time
+  clock_time = int(row[3])
+  measurements["clock_time"] += clock_time
+
+  row = next(reader)
+  ram = float(row[0].replace(",", "."))
+  measurements["pkg"] += ram
+
+  row = next(reader)
+  user_time = int(row[0])
+  measurements["user_time"] += user_time
+
+  row = next(reader, "0")
+  sys_time = int(row[0])
+  measurements["sys_time"] += sys_time
+
+
 def run_test (prog, output, csv_file, test_file, measurements):
   tmp_output = "saida.csv"
   if os.path.isfile(tmp_output):
     os.remove(tmp_output)
 
-  power_flag = set_perf_power()
+  power_flag = get_perf_flag()
   cmd_test = f"perf stat -x ';' -e {power_flag} {prog} {test_file} {output} 2>>{tmp_output}"
   print(f"Executing {cmd_test}")
   os.system(cmd_test)
 
-  with open(tmp_output, newline='') as csvfile: 
+  with open(tmp_output, newline='') as csvfile:
     reader = csv.reader(csvfile, delimiter=';')
-    i = 0
-    begin_measurement = False
-    for row in reader:
-      if begin_measurement:
-        measurements[i] += float(row[0].replace(",", "."))
-        if i == 0:
-          measurements[2] += int(row[3])
-        i = i + 1
-      elif is_perf_measurement(row):
-        begin_measurement = True
+    while True:
+      row = next(reader)
+      print(f"Row {row} first = {is_perf_measurement(row)}")
+      if is_perf_measurement(row):  # begin of perf measurement (extra pkg measurement)
+        get_measurements(reader, measurements)
+        break
 
   print(f"Finished test: {measurements}")
-    
+
 
 print(sys.argv)
 for v in sys.argv:
@@ -100,16 +104,21 @@ tests = sys.argv[5].strip().split(" ")
                #pkg, ram, cpu_time  
 
 for i in range(NRUNS):
-  measurements = [  0,    0,   0]
+  measurements = {"pkg": 0, "ram": 0, "clock_time" : 0, "user_time" : 0, "sys_time" : 0 }
   for test in tests:
     run_test(exe_prog, output, csv_file, test, measurements)
-  pkg_measure = measurements[0]
-  ram_measure = measurements[1]
-  time_measure = measurements[2]  # time in nanoseconds (10^9)
 
-  time_measure = time_measure / pow(10, 6)  # Nanosecons -> Miliseconds
+  pkg = measurements["pkg"]
+  ram = measurements["ram"]
+  clock_time = measurements["clock_time"]  # time in nanoseconds (10^9)
+  user_time = measurements["user_time"]  # time in nanoseconds (10^9)
+  sys_time = measurements["sys_time"]  # time in nanoseconds (10^9)
+
+  clock_time = clock_time / pow(10, 6)  # Nanosecons -> Miliseconds
+  user_time = user_time / pow(10, 6)  # Nanosecons -> Miliseconds
+  sys_time = sys_time / pow(10, 6)  # Nanosecons -> Miliseconds
 
   #name   #pkg  #core #ram  #gpu #time
-  entry_data = [ csv_entry, f"{pkg_measure:7.2f}", "", f"{ram_measure:6.2f}", "", f"{time_measure:5.0f}" ]
+  entry_data = [ csv_entry, f"{pkg:7.2f}", "", f"{ram:6.2f}", "", f"{clock_time:5.0f}", f"{user_time:5.0f}", f"{sys_time:5.0f}" ]
   make_new_csv_entry(csv_file, entry_data)   
 
