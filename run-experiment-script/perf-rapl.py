@@ -56,7 +56,7 @@ def get_measurements (reader, measurements):
 
   row = next(reader)
   ram = float(row[0].replace(",", "."))
-  measurements["pkg"] += ram
+  measurements["ram"] += ram
 
   row = next(reader)
   user_time = int(row[0])
