@@ -44,6 +44,7 @@ sleepTime = 120 # seconds
 beepInterval = 0.3 # seconds
 rebootTime = 0 # minutes
 cmdKillNet = "ifconfig eno1 down"
+cmdKillAnydesk = "service anydesk stop"
 logDir = "log/"
 logFile = "myLog.txt"
 
@@ -55,8 +56,9 @@ def write_log (msg):
 
 
 def kill_and_sleep (sleepTime):
-  os.system(cmdKillNet) 
+  os.system(cmdKillAnydesk)
   time.sleep(sleepTime)
+  os.system(cmdKillNet) #antes do sleep nao estava fazendo efeito
   
 
 def make_beep (n):
@@ -84,6 +86,19 @@ def get_next_dir (file):
     f.write(data) # write the data back
     f.truncate() # set the file size to the current size
     return firstLine.rstrip()
+  
+def turnXon():
+  cmd1 = 'systemctl enable graphical.target --force'
+  cmd2 = 'systemctl set-default graphical.target'
+  os.system(cmd1)
+  os.system(cmd2)
+
+
+def turnXoff():
+  cmd1 = 'systemctl enable multi-user.target --force'
+  cmd2 = 'systemctl set-default multi-user.target'
+  os.system(cmd1)
+  os.system(cmd2)
 
 #checa se o arquivo ja existe
 check_file = os.path.isfile(toProcess)
@@ -93,22 +108,29 @@ if check_file == False:
    with open(toProcess,"a+") as fapp:
      for mydir in dirs:
        fapp.write(f"{mydir}\n")
+     fapp.write('Final reboot\n')
+   turnXoff()
    make_beep(1)
    os.system('shutdown -r now')
 elif os.stat(toProcess).st_size == 0:
   msg = "Job done."
   write_log(msg)
 else:
-  write_log("Processing files")
-  kill_and_sleep(sleepTime)
   mydir = get_next_dir(toProcess)
-  indexDir = get_index(mydir) + 1
-  msg = f"I'm going to process directory {mydir} {indexDir}"
-  write_log(msg)
-  os.chdir(mydir)
-  os.system("./faztudo.sh")
-  os.chdir(prevDir)
-  write_log(f"Finished {mydir}")
-  make_beep(get_index(mydir))
-  os.system(f"shutdown -r +{rebootTime}")
+  if mydir == 'Final reboot':
+    write_log(mydir)
+    turnXon()
+    os.system(f"shutdown -r +{rebootTime}")
+  else:
+    write_log("Processing files")
+    kill_and_sleep(sleepTime)
+    indexDir = get_index(mydir) + 1
+    msg = f"I'm going to process directory {mydir} {indexDir}"
+    write_log(msg)
+    os.chdir(mydir)
+    os.system("./faztudo.sh")
+    os.chdir(prevDir)
+    write_log(f"Finished {mydir}")
+    make_beep(get_index(mydir))
+    os.system(f"shutdown -r +{rebootTime}")
 
