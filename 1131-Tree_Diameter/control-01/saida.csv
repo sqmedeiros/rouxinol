@@ -1,0 +1,6 @@
+./8377242.exe: Segmentation fault
+7,47;Joules;power/energy-pkg/;242035527;100,00;;
+7,47;Joules;power/energy-pkg/;242036772;100,00;;
+0,78;Joules;power/energy-ram/;242037938;100,00;;
+104042000;ns;user_time;104042000;100,00;;
+19195000;ns;system_time;19195000;100,00;;

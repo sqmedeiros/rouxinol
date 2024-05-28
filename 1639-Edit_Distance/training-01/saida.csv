@@ -1,0 +1,6 @@
+./916026.exe: Segmentation fault
+4,34;Joules;power/energy-pkg/;141250117;100,00;;
+4,34;Joules;power/energy-pkg/;141250944;100,00;;
+0,43;Joules;power/energy-ram/;141251443;100,00;;
+9595000;ns;user_time;9595000;100,00;;
+9595000;ns;system_time;9595000;100,00;;

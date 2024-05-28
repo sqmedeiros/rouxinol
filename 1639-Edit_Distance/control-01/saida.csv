@@ -1,0 +1,6 @@
+./8619941.exe: Segmentation fault
+4,16;Joules;power/energy-pkg/;135356057;100,00;;
+4,16;Joules;power/energy-pkg/;135352771;100,00;;
+0,43;Joules;power/energy-ram/;135350377;100,00;;
+9957000;ns;user_time;9957000;100,00;;
+9957000;ns;system_time;9957000;100,00;;

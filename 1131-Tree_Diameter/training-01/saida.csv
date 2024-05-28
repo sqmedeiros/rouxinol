@@ -1,0 +1,6 @@
+./877792.exe: Segmentation fault
+7,51;Joules;power/energy-pkg/;245296450;100,00;;
+7,48;Joules;power/energy-pkg/;245293538;100,00;;
+0,77;Joules;power/energy-ram/;245291368;100,00;;
+107065000;ns;user_time;107065000;100,00;;
+19288000;ns;system_time;19288000;100,00;;

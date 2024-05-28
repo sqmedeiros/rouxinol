@@ -1,0 +1,6 @@
+./899348.exe: Segmentation fault
+7,09;Joules;power/energy-pkg/;228660105;100,00;;
+7,09;Joules;power/energy-pkg/;228656964;100,00;;
+0,75;Joules;power/energy-ram/;228654762;100,00;;
+87821000;ns;user_time;87821000;100,00;;
+19375000;ns;system_time;19375000;100,00;;
