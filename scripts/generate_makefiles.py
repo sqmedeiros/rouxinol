@@ -72,8 +72,13 @@ def generateEntryline(entries):
   line = line + "\n"
   return line
 
-def generateMakefileText(mydir,experiment,dataFormatada,machine,useperf):
-  texto = "export PROBLEM = " + mydir + "-" + experiment + "-" + dataFormatada + machine +  "\n"
+def generateMakefileText(mydir,experiment,kindofexperiment,dataFormatada,machine,useperf):
+  texto = "export PROBLEM = " + mydir + "-" + experiment + "-" + dataFormatada + machine
+  if useperf:
+    texto = texto + "-perf" +  "\n"
+  else:
+    texto = texto + "-rapl" +  "\n"
+
   texto  = texto + "export CPPFLAGS = -DONLINE_JUDGE -std=c++17 -O2\n"
   if useperf:
     texto = texto + "export OUTPUT = 2>&1 > /dev/null\n"
@@ -82,12 +87,12 @@ def generateMakefileText(mydir,experiment,dataFormatada,machine,useperf):
   entries = getEntries()
   entryline  = generateEntryline(entries)
   texto = texto + entryline
-  texto = texto + "all:\n\t+$(MAKE) -C " + experiment + "\n"
+  texto = texto + "all:\n\t+$(MAKE) -C " + kindofexperiment + "\n"
   texto = texto + "clean:\n\trm rand/*.exe training/*.exe control/*.exe\n"
   return texto
 
-def createMakefile(mydir,experiment,dataFormatada, machine,useperf):
-  texto = generateMakefileText(mydir,experiment,dataFormatada,machine,useperf)
+def createMakefile(mydir,experiment,kindofexperiment,dataFormatada, machine,useperf):
+  texto = generateMakefileText(mydir,experiment,kindofexperiment,dataFormatada,machine,useperf)
   with open("Makefile","w") as f:
     f.write(texto) # write the data back
     f.truncate() # set the file size to the current size
@@ -111,14 +116,15 @@ def  getnames(arquivos):
     machine = "-" + arquivos[2]
   return experiment, machine, useperf
 
-def   generateexperimentdir(experiment,mydir):
-  print('bla')
+def generateexperimentdir(experiment,kindofexperiment,mydir):
+  os.system('rm -rf ' + mydir + '/' + kindofexperiment)
+  os.system('cp -R ' + mydir + '/' + experiment + ' ' + mydir + '/' + kindofexperiment)
 
-def copyMakefilesubdir(experiment, mydir, useperf):
+def copyMakefilesubdir(kindofexperiment, mydir, useperf):
   if useperf:
-    os.system('cp ' + makefileDir + 'Makefile-perf ' + mydir + '/' + experiment + '/Makefile')
+    os.system('cp ' + makefileDir + 'Makefile-perf ' + mydir + '/' + kindofexperiment + '/Makefile')
   else:
-    os.system('cp ' + makefileDir + 'Makefile-RAPL ' + mydir + '/' + experiment + '/Makefile')
+    os.system('cp ' + makefileDir + 'Makefile-RAPL ' + mydir + '/' + kindofexperiment + '/Makefile')
 
 arquivos = sys.argv
 
@@ -141,8 +147,8 @@ else:
 for mydir in dirs:
   write_log("Working on " + mydir)
   os.chdir(mydir)
-  createMakefile(mydir,experiment,dataFormatada,machine,useperf)
+  createMakefile(mydir,experiment,kindofexperiment,dataFormatada,machine,useperf)
   os.chdir(prevDir)
-  generateexperimentdir(experiment,mydir)
-  copyMakefilesubdir(experiment, mydir, useperf)
+  generateexperimentdir(experiment,kindofexperiment,mydir)
+  copyMakefilesubdir(kindofexperiment, mydir, useperf)
 write_log("Makefiles Complete")
