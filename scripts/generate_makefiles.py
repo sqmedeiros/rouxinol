@@ -55,6 +55,16 @@ def getEntries():
   entries = [f for f in listdir("./test") if isfile(join("./test", f))]
   return entries
 
+def checkexperimentname(experiment):
+  print(experiment[0:7])
+  if experiment[0:7] == 'control':
+    return 'control'
+  elif experiment[0:8] == 'training':
+    return 'training'
+  else:
+    print('unrecognized experiment type. Muste be control or training. Aborting')
+    exit()
+
 def generateEntryline(entries):
   line = "export TEST = "
   for ent in entries:
@@ -101,6 +111,9 @@ def  getnames(arquivos):
     machine = "-" + arquivos[2]
   return experiment, machine, useperf
 
+def   generateexperimentdir(experiment,mydir):
+  print('bla')
+
 def copyMakefilesubdir(experiment, mydir, useperf):
   if useperf:
     os.system('cp ' + makefileDir + 'Makefile-perf ' + mydir + '/' + experiment + '/Makefile')
@@ -112,6 +125,8 @@ arquivos = sys.argv
 checkArguments(arquivos)
 
 experiment, machine, useperf = getnames(arquivos)
+
+kindofexperiment = checkexperimentname(experiment)
 
 dataAtual = datetime.now()
 dataFormatada = dataAtual.strftime("%d-%m-%Y-%H-%M")
@@ -128,5 +143,6 @@ for mydir in dirs:
   os.chdir(mydir)
   createMakefile(mydir,experiment,dataFormatada,machine,useperf)
   os.chdir(prevDir)
+  generateexperimentdir(experiment,mydir)
   copyMakefilesubdir(experiment, mydir, useperf)
 write_log("Makefiles Complete")
