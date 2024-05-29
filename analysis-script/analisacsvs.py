@@ -44,11 +44,35 @@ def OrderbynameandComputenexec(df,computenexec,nexec):
         nexec = findnumberofexec(df)
     return df, nexec
 
-def saveSlopesCsv(slopes, arquivoscurtos):
+def saveSlopesCsv(slopes, arquivoscurtos,experimentname):
     d = {'nome': arquivoscurtos, 'slopes': slopes}
     ds = pandas.DataFrame(data=d)
     ds = ds.sort_values('nome')
-    ds.to_csv('analysis_results/slopes.csv', index = False)
+    ds.to_csv('analysis_results/slopes-' + experimentname + '.csv', index = False)
+
+
+def removeinitialditdash(arquivos):
+    for i in range(1,len(arquivos)):
+        if arquivos[i][0:2] == '.\\':   #remove .\ do inicio dos argumentos caso exista
+            arquivos[i] = arquivos[i][2:len(arquivos[i])]
+    return arquivos
+
+
+def getshortnames(arquivos):
+    arquivoscurtos = []
+    for i in range(1,len(arquivos)):
+        #arquivoscurtos.append(arquivos[i][5:len(arquivos[i])-4])
+        arquivoscurtos.append(arquivos[i][0:4])
+    return arquivoscurtos
+
+def getexperimentname(arquivos):
+    offset = 8
+    i = arquivos[1].find('control')
+    if i == -1:
+        i = arquivos[1].find('training')
+        offset = 9
+    return arquivos[1][i+offset:-4]
+
 
 
 arquivos = sys.argv
@@ -117,14 +141,11 @@ nsigma = 2
 h1 = plt.figure()
 h2 = plt.figure()
 
-arquivoscurtos = []
-for i in range(1,len(arquivos)):
-    if arquivos[i][0:2] == '.\\':   #remove .\ do inicio dos argumentos caso exista
-        arquivos[i] = arquivos[i][2:len(arquivos[i])]
-    #arquivoscurtos.append(arquivos[i][5:len(arquivos[i])-4])
-    arquivoscurtos.append(arquivos[i][0:4])
 
-print(arquivoscurtos)
+arquivos = removeinitialditdash(arquivos)
+arquivoscurtos = getshortnames(arquivos)
+experimentname = getexperimentname(arquivos)
+
 try:
     os.mkdir('analysis_results')
     print('cirando diretorio de resultados')
@@ -395,7 +416,7 @@ for i in range(len(tempomedio)):
     print(slopes[i],end='\t')   
     file.write("{:.5f}".format(slopes[i]))
     file.write("\t")
-saveSlopesCsv(slopes, arquivoscurtos)
+saveSlopesCsv(slopes, arquivoscurtos, experimentname)
 print('\ntempos medios das solucoes:')
 file.write('\ntempos medios das solucoes:\n')
 for i in range(len(tempomedio)):
