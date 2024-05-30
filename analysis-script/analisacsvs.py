@@ -66,12 +66,10 @@ def getshortnames(arquivos):
     return arquivoscurtos
 
 def getexperimentname(arquivos):
-    offset = 8
     i = arquivos[1].find('control')
     if i == -1:
         i = arquivos[1].find('training')
-        offset = 9
-    return arquivos[1][i+offset:-4]
+    return arquivos[1][i:-4]
 
 
 
