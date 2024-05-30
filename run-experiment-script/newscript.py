@@ -39,6 +39,7 @@ dirs = [
 
 experiments = "Experiments.txt"
 toProcess = "ToProcess.txt"
+reiniciaUnicaVez =  "Reiniciou.txt"
 prevDir = "../"
 sleepTime = 120 # seconds
 beepInterval = 0.3 # seconds
@@ -79,7 +80,7 @@ def get_index (mydir):
 
 
 def get_next_dir (file):
-    return recortaprimeiralinha(file)
+    return recorta_primeira_linha(file)
   
 def turnXon():
   cmd1 = 'systemctl enable graphical.target --force'
@@ -101,9 +102,23 @@ def arquivos_existem():
         return False
     return True
 
+def cria_arquivo(file):
+   open(file,"a+")
+
+def apaga_arquivo(file):
+  check_file = os.path.isfile(file)
+  if check_file:
+    os.system('rm -f ' + file)
+
 def reinicia():
-    print('reboot')
-    #os.system(f"shutdown -r +{rebootTime}")
+    os.system(f"shutdown -r +{rebootTime}")
+
+def reinicia_unicavez():
+   jareiniciou = os.path.isfile(reiniciaUnicaVez)
+   if not(jareiniciou):
+      cria_arquivo(reiniciaUnicaVez)
+      write_log('Last reboot')
+      reinicia()
 
 def criaToProcess():
    write_log("Creating file with directories to process...")
@@ -149,6 +164,7 @@ def prepara_novo_experimento():
     criaToProcess()
     turnXoff()
     make_beep(1)
+    apaga_arquivo(reiniciaUnicaVez)
     reinicia()
 
 def continua_experimento_atual():
@@ -166,11 +182,11 @@ def continua_experimento_atual():
     reinicia()
 
 def encerra_experimentos():
-    write_log('Job done')
     turnXon()
-    reinicia()
+    reinicia_unicavez()
+    write_log('Job done')
 
-def pegatamanhoarquivos(experiments,toProcess):
+def pega_tamanho_arquivos(experiments,toProcess):
     size_exp = os.stat(experiments).st_size
     size_tp = os.stat(toProcess).st_size
     return size_exp, size_tp
@@ -187,7 +203,7 @@ if not(arquivos_existem()):
   write_log('Missing experiment files. Aborting.')
   exit()
 
-size_exp, size_tp = pegatamanhoarquivos(experiments,toProcess)
+size_exp, size_tp = pega_tamanho_arquivos(experiments,toProcess)
 
 if no_meio_de_experimento(size_tp):
   continua_experimento_atual()
