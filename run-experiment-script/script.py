@@ -37,8 +37,9 @@ dirs = [
   "2166-Prefix_Sum_Queries"
 ]
 
-
+experiments = "Experiments.txt"
 toProcess = "ToProcess.txt"
+reiniciaUnicaVez =  "Reiniciou.txt"
 prevDir = "../"
 sleepTime = 120 # seconds
 beepInterval = 0.3 # seconds
@@ -48,12 +49,10 @@ cmdKillAnydesk = "service anydesk stop"
 logDir = "log/"
 logFile = "myLog.txt"
 
-
 def write_log (msg):
   print(msg)
   with open(logDir + logFile, "a+") as f:
     f.write(f"{datetime.now()}: {msg}\n")
-
 
 def kill_and_sleep (sleepTime):
   os.system(cmdKillAnydesk)
@@ -79,13 +78,7 @@ def get_index (mydir):
 
 
 def get_next_dir (file):
-  with open(file, 'r+') as f:
-    firstLine = f.readline() # read the first line and throw it out
-    data = f.read() # read the rest
-    f.seek(0) # set the cursor to the top of the file
-    f.write(data) # write the data back
-    f.truncate() # set the file size to the current size
-    return firstLine.rstrip()
+    return recorta_primeira_linha(file)
   
 def turnXon():
   cmd1 = 'systemctl enable graphical.target --force'
@@ -100,28 +93,81 @@ def turnXoff():
   os.system(cmd1)
   os.system(cmd2)
 
-#checa se o arquivo ja existe
-check_file = os.path.isfile(toProcess)
+def arquivos_existem():
+    check_exp = os.path.isfile(experiments)
+    check_tp = os.path.isfile(toProcess)
+    if not(check_exp and check_tp):
+        return False
+    return True
 
-if check_file == False:
+def cria_arquivo(file):
+   open(file,"a+")
+
+def apaga_arquivo(file):
+  check_file = os.path.isfile(file)
+  if check_file:
+    os.system('rm -f ' + file)
+
+def reinicia():
+    #print('reboot')
+    os.system(f"shutdown -r +{rebootTime}")
+
+def reinicia_unicavez():
+   jareiniciou = os.path.isfile(reiniciaUnicaVez)
+   if not(jareiniciou):
+      cria_arquivo(reiniciaUnicaVez)
+      write_log('Last reboot')
+      reinicia()
+
+def criaToProcess():
    write_log("Creating file with directories to process...")
    with open(toProcess,"a+") as fapp:
      for mydir in dirs:
-       fapp.write(f"{mydir}\n")
-     fapp.write('Final reboot\n')
-   turnXoff()
-   make_beep(1)
-   os.system('shutdown -r now')
-elif os.stat(toProcess).st_size == 0:
-  msg = "Job done."
-  write_log(msg)
-else:
-  mydir = get_next_dir(toProcess)
-  if mydir == 'Final reboot':
-    write_log(mydir)
-    turnXon()
-    os.system(f"shutdown -r +{rebootTime}")
-  else:
+       fapp.write(f"{mydir}\n") 
+
+def recorta_primeira_linha(file):
+    with open(file, 'r+') as f:
+        firstLine = f.readline() # read the first line and throw it out
+        data = f.read() # read the rest
+        f.seek(0) # set the cursor to the top of the file
+        f.write(data) # write the data back
+        f.truncate() # set the file size to the current size
+
+        return firstLine.rstrip()
+
+def extrai_params_linha(linha):
+    params = linha.split()
+    exp = params[0]
+    maq = params[1]
+    if len(params) == 3:
+        perf = params[2]
+    else:
+        perf = ''
+    return exp, maq, perf
+
+def pega_prox_experimento(file):
+    linha = recorta_primeira_linha(file)
+    exp, maq, perf = extrai_params_linha(linha)
+    return exp, maq, perf
+    
+
+def gera_makefiles():
+  nomeexp, maquina,perf = pega_prox_experimento(experiments)
+  print(nomeexp, maquina,perf)
+  cmd = 'python3 scripts/generate_makefiles.py ' + nomeexp + ' ' + maquina + ' ' + perf
+  os.system(cmd)
+
+
+def prepara_novo_experimento():
+    gera_makefiles()
+    criaToProcess()
+    turnXoff()
+    make_beep(1)
+    apaga_arquivo(reiniciaUnicaVez)
+    reinicia()
+
+def continua_experimento_atual():
+    mydir = get_next_dir(toProcess)
     write_log("Processing files")
     kill_and_sleep(sleepTime)
     indexDir = get_index(mydir) + 1
@@ -132,5 +178,37 @@ else:
     os.chdir(prevDir)
     write_log(f"Finished {mydir}")
     make_beep(get_index(mydir))
-    os.system(f"shutdown -r +{rebootTime}")
+    reinicia()
 
+def encerra_experimentos():
+    turnXon()
+    reinicia_unicavez()
+    write_log('Job done')
+
+def pega_tamanho_arquivos(experiments,toProcess):
+    size_exp = os.stat(experiments).st_size
+    size_tp = os.stat(toProcess).st_size
+    return size_exp, size_tp
+
+def no_meio_de_experimento(size_tp):
+   return size_tp!=0
+
+def tem_experimento_pra_fazer(size_exp):
+   return size_exp!=0
+
+
+
+#checa se os arquivos experiments e toProcesso existem
+if not(arquivos_existem()):
+  write_log('Missing experiment files. Aborting.')
+  exit()
+
+size_exp, size_tp = pega_tamanho_arquivos(experiments,toProcess)
+
+if no_meio_de_experimento(size_tp):
+  continua_experimento_atual()
+elif tem_experimento_pra_fazer(size_exp):
+  prepara_novo_experimento()
+else:
+  encerra_experimentos()
+  
