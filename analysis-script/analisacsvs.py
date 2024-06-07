@@ -185,7 +185,7 @@ def salvaresumo(arquivo,vnome, vmconsumo, vdconsumo, vmtempo,vdtempo, vmtsoma, v
 
     return ds, d
 
-def checardiferencamaxima(difft, df):
+def checardiferencamaxima(difft, df, j):
     if (difft.max() > 10):
         print("\n\n\nDifference between times seem too large in " + df.iloc[j,0] + ". Max = " + str(difft.max()) + ". Number of occurences: " + str(sum(i > 10 for i in difft)) + "\n\n\n\n")
         file.write("\n\n\nDifference between times seem too large in " + df.iloc[j,0] + ". Max = " + str(difft.max()) + ". Number of occurences: " + str(sum(i > 10 for i in difft)) + "\n\n\n\n")
@@ -239,7 +239,7 @@ def calculamedias(df, ncolunas, nlinhas, nexec, flags, file):
             tsys = np.array(df.iloc[j:j+nexec,7])
             tsomausersys = tuser + tsys
             difft = np.array(t - tsomausersys)
-            checardiferencamaxima(difft, df)
+            checardiferencamaxima(difft, df, j)
                 
         pkg, t, tsomausersys = removeextremos(pkg,t,tsomausersys,nexec)
 
@@ -312,11 +312,11 @@ def gerapontosreta(a,b,vmtempo):
     yr = np.array(a*xr + b)
     return xr, yr
 
-def plotaretas(a,b,vmtempo,vdtempo,vmconsumo,vdconsumo,nsigma,estilo,estilo2,cor,arquivo):
+def plotaretas(a,b,vmtempo,vdtempo,vmconsumo,vdconsumo,nsigma,estilo,estilo2,cor,arquivo,h):
     xr, yr  = gerapontosreta(a,b,vmtempo)
     
     #plota pontos e reta de tendencia
-    plt.figure(h1.number)
+    plt.figure(h.number)
     plt.plot(xr,yr,estilo+ cor)        
     #plt.errorbar(vmtempo,vmconsumo, yerr=nsigma*vdconsumo, fmt =estilos[nestilo]+cores[(i-1)%7],label=arquivos[i][0:-4],markersize=8)
     plt.errorbar(vmtempo,vmconsumo, yerr=nsigma*vdconsumo, xerr=nsigma*vdtempo,fmt =estilo2+cor,label=arquivo[0:-4],markersize=8)
@@ -372,14 +372,15 @@ def spearman(ds, file):
     Vspearman.append(coeffS)
     return coeffS, Vspearman
 
-def plotarestasdesvio(xr,yr,sigout,desvioerro,cor):
-    plt.figure(h2.number)
+def plotarestasdesvio(xr,yr,sigout,desvioerro,cor,h):
+    plt.figure(h.number)
     plt.plot(xr,yr,cor)
     plt.plot(xr,yr+sigout*desvioerro,'--' + cor,alpha=0.2)
     plt.plot(xr,yr-sigout*desvioerro,'--' + cor,alpha=0.2)
 
-def detectaoutliers(outliers,vmtempo,vmconsumo,vdtempo,vdconsumo,sigout,desvioerro,verr,vnome,cor):
+def detectaoutliers(outliers,vmtempo,vmconsumo,vdtempo,vdconsumo,sigout,desvioerro,verr,vnome,cor,h):
 
+    plt.figure(h.number)
     vlabel = ['low','medium','high']
     vestcol = ['.','d','s']
     for k in range(0,3):
@@ -583,10 +584,13 @@ def imprimesalvainfo(slopes,tempomedio,consumomedio,arquivoscurtos,experimentnam
 
 
 def removeoutliers(ind, vmtempo, vmconsumo, vdconsumo):
+    cont = 0
+    print(ind)
     for i in ind:
-        vmtempo = np.delete(vmtempo, i)
-        vmconsumo = np.delete(vmconsumo, i)
-        vdconsumo = np.delete(vdconsumo, i)
+        vmtempo = np.delete(vmtempo, i-cont) #cada vez que remove 1, os indices diminuem em 1
+        vmconsumo = np.delete(vmconsumo, i-cont)
+        vdconsumo = np.delete(vdconsumo, i-cont)
+        cont = cont + 1
     return vmtempo, vmconsumo, vdconsumo
 
 ########   main   ##################
@@ -638,16 +642,16 @@ for i in range(1,len(arquivos)):
     a,b = calculaajuste(vmtempo, vmconsumo, vdconsumo, flags)
 
     indest = (i-1)%7
-    xr, yr = plotaretas(a,b,vmtempo,vdtempo,vmconsumo,vdconsumo,nsigma,estilos[indest],estilos2[indest],cores[indest],arquivos[i])
+    xr, yr = plotaretas(a,b,vmtempo,vdtempo,vmconsumo,vdconsumo,nsigma,estilos[indest],estilos2[indest],cores[indest],arquivos[i],h1)
     verr, sse, desvioerro, gorduras = calculaerro(a,b,vmtempo, vmconsumo, gorduras, flags, file)
     sigout = 2 #nmero de desvios para um ponto ser considerado outlier
-    plotarestasdesvio(xr,yr,sigout,desvioerro,cores[indest])
+    plotarestasdesvio(xr,yr,sigout,desvioerro,cores[indest],h2)
 
     rshapwilk = shapiro(verr, file)
     coeffP, Vr2 = pearson(vmconsumo, sse, file, arquivos[i], Vr2)
     coeffS, Vspearman = spearman(ds, file)
 
-    outliers = detectaoutliers(outliers,vmtempo,vmconsumo,vdtempo,vdconsumo,sigout,desvioerro,verr,vnome, cores[indest])
+    outliers = detectaoutliers(outliers,vmtempo,vmconsumo,vdtempo,vdconsumo,sigout,desvioerro,verr,vnome, cores[indest],h2)
 
     if flags['rout']:
         nvmtempo, nvmconsumo, nvdconsumo = removeoutliers(outliers['indsel'][i], vmtempo, vmconsumo, vdconsumo)
