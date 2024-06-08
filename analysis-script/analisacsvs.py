@@ -44,8 +44,8 @@ def OrderbynameandComputenexec(df,computenexec,nexec):
         nexec = findnumberofexec(df)
     return df, nexec
 
-def saveSlopesCsv(slopes, arquivoscurtos,experimentname):
-    d = {'nome': arquivoscurtos, 'slopes': slopes}
+def saveSlopesCsv(slopes, lincoeff, arquivoscurtos,experimentname):
+    d = {'nome': arquivoscurtos, 'slopes': slopes, 'lincoeff': lincoeff}
     ds = pandas.DataFrame(data=d)
     ds = ds.sort_values('nome')
     ds.to_csv('analysis_results/slopes-' + experimentname + '.csv', index = False)
@@ -75,39 +75,32 @@ def getexperimentname(arquivos):
 def checkargs(arquivos):
     narq = len(arquivos)
     if  narq < 2: #o primeiro argumento é o nome do proprio script
-        print('usage: analisacsv file1_machine1.csv file2_machine1.csv ... file1_machine2.csv file2_machine2.csv... ... <-wmmq> <-tsum> <-nexec n1> <-nsolustions n2> <-rout>')
+        print('usage: analisacsv file1_machine1.csv file2_machine1.csv ... file1_machine2.csv file2_machine2.csv... ... <-wmmq> <-tclock> <-nexec n1> <-nsolustions n2> <-rout> <-b>')
         exit()          
     return narq
 
+def getsimpleflag(flag, flags,arquivos, narq):
+    flags[flag] = False
+    if ('-' + flag) in arquivos:
+        flags[flag] = True
+        arquivos.remove('-' +flag)
+        narq = narq-1
+    return flags, arquivos, narq
 
 def getflags(arquivos, narq):
+    '''
+    wmmq = weitghted mmq
+    tclock = usar tempo do wall clock (o default é usar a soma do user+sys)
+    perf = somar pkg e ram dados pelo perf
+    rout = remove outliers and compue slope again
+    b = compute ax+b with mmq
+    '''
+    vflags = ['wmmq','tclock','perf','rout','b']
     flags = {}
-
-    #opcao de usar mmq normal ou com peso (-wmmq)
-    flags['wmmq'] = False
-    if '-wmmq' in arquivos:
-        flags['wmmq'] = True
-        arquivos.remove('-wmmq')
-        narq = narq-1
-
-    #opcao de usar a soma do tempo user + sys no lugar do tempo medido
-    flags['tsum'] = True #False
-    if '-tsum' in arquivos:
-        flags['tsum'] = True
-        arquivos.remove('-tsum')
-        narq = narq-1
-
-    if '-tclock' in arquivos:
-        flags['tsum'] = False
-        arquivos.remove('-tclock')
-        narq = narq-1
-
-    flags['perf'] = False
-    if '-perf' in arquivos:
-        flags['perf'] = True
-        arquivos.remove('-perf')
-        narq = narq-1
-
+    
+    for i in vflags:
+        flags, arquivos, narq = getsimpleflag(i, flags, arquivos, narq)
+ 
     #quantas execucoes de cada codigo foram feitas. 10 por default
     nexec = 10 
     flags['computenexec'] = True #achar automaticamente o numero de execucoes
@@ -128,13 +121,6 @@ def getflags(arquivos, narq):
         arquivos.pop(nsolutionsindex+1)
         arquivos.remove('-nsolutions')
         narq = narq-2
-
-    #remover outliers
-    flags['rout'] = False
-    if '-rout' in arquivos:
-        flags['rout'] = True
-        arquivos.remove('-rout')
-        narq = narq-1
 
     return flags, narq, nexec
 
@@ -278,7 +264,7 @@ def salvaresumoordenado(d,arquivo):
     ds = ds.sort_values('tempo_medio')
     ds.to_csv('analysis_results/resumo_ordenado_tempo' + arquivo)
 
-def diferencatempos(ncolunas, vmtempo, vmtsoma, flags):
+def diferencatempos(ncolunas, vmtempo, vdtempo, vmtsoma, flags):
 
     #diferença entre tempos medidos (rapl e time)
     if ncolunas == 8:
@@ -289,7 +275,7 @@ def diferencatempos(ncolunas, vmtempo, vmtsoma, flags):
         if (tempoRMSE > 10):
             print('\n\n\n\nRMSE difference between times seem too large\n\n\n\n')
             file.write('\n\n\n\nRMSE difference between times seem too large\n\n\n\n')
-        if flags['tsum']:
+        if not(flags['tclock']):
             vmtempo = vmtsoma
             vdtempo = vdtsoma
     return vmtempo, vdtempo
@@ -302,8 +288,10 @@ def calculaajuste(vmtempo, vmconsumo, vdconsumo, flags):
         a = mmqcompeso(vmtempo, vmconsumo, vdconsumo)
         #a = mmqcompeso(vmtempo, vmconsumo, vdconsumo*vdtempo)
     else:
-        a = ajusteax(vmtempo, vmconsumo)
-        #a,b = mmq(vmtempo, vmconsumo)
+        if flags['b']:
+            a,b = mmq(vmtempo, vmconsumo)
+        else:
+            a = ajusteax(vmtempo, vmconsumo)
     return a,b
 
 
@@ -536,7 +524,7 @@ def mostraesalvagraficos(arquivoscurtos):
     plt.savefig('analysis_results/outliers' + ''.join(arquivoscurtos[0:]) + '.pdf')  
     plt.show()
 
-def imprimesalvainfo(slopes,tempomedio,consumomedio,arquivoscurtos,experimentname,Vr2,Vspearman,gorduras,file):
+def imprimesalvainfo(slopes,lincoeff,tempomedio,consumomedio,arquivoscurtos,experimentname,Vr2,Vspearman,gorduras,file):
 
     print('\nslopes:')
     file.write('\nslopes:\n')
@@ -544,7 +532,13 @@ def imprimesalvainfo(slopes,tempomedio,consumomedio,arquivoscurtos,experimentnam
         print(slopes[i],end='\t')   
         file.write("{:.5f}".format(slopes[i]))
         file.write("\t")
-    saveSlopesCsv(slopes, arquivoscurtos, experimentname)
+    print('\nlinear coefficients:')
+    file.write('\nlinear coefficients:\n')
+    for i in range(len(tempomedio)):
+        print(lincoeff[i],end='\t')   
+        file.write("{:.5f}".format(lincoeff[i]))
+        file.write("\t")
+    saveSlopesCsv(slopes,lincoeff, arquivoscurtos, experimentname)
     print('\ntempos medios das solucoes:')
     file.write('\ntempos medios das solucoes:\n')
     for i in range(len(tempomedio)):
@@ -619,6 +613,7 @@ file = criarelatorio(arquivoscurtos)
 
 #tempos medios e inclinações de cada
 slopes = []
+lincoeff = []
 slopesoutliersless = []
 tempomedio = []
 consumomedio = []
@@ -637,7 +632,7 @@ for i in range(1,len(arquivos)):
     ds, d = salvaresumo(arquivos[i],vnome, vmconsumo, vdconsumo, vmtempo,vdtempo, vmtsoma, vdtsoma)
     vnome, vmconsumo, vdconsumo, vmtempo, vdtempo, vmtsoma, vdtsoma =  carregaordenadonome(ds)
     salvaresumoordenado(d,arquivos[i])
-    vmtempo, vdtempo = diferencatempos(ncolunas, vmtempo, vmtsoma, flags)
+    vmtempo, vdtempo = diferencatempos(ncolunas, vmtempo, vdtempo, vmtsoma, flags)
 
     a,b = calculaajuste(vmtempo, vmconsumo, vdconsumo, flags)
 
@@ -659,11 +654,12 @@ for i in range(1,len(arquivos)):
 
     #armazena slope e tempo medio da solucao
     slopes.append(a)
-    print('slope: ',a)
+    lincoeff.append(b)
+    print('slope: ',a,' linear coeff: ', b)
     tempomedio.append(vmtempo.mean())
     consumomedio.append(vmconsumo.mean())
 
-imprimesalvainfo(slopes,tempomedio,consumomedio,arquivoscurtos,experimentname,Vr2,Vspearman,gorduras,file)
+imprimesalvainfo(slopes,lincoeff,tempomedio,consumomedio,arquivoscurtos,experimentname,Vr2,Vspearman,gorduras,file)
 
 #matrizrelacaotempomedio(slopes,tempomedio,file)
 buscaoutliersmaquinasdiferentes(narq,outliers,arquivos,file)
