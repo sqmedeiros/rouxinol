@@ -76,10 +76,13 @@ def grafico(nacertos):
 def imprimeaceretoproblemas(vacertos, nomes, ax):
     print('numero de acertos em funcao de n e probelmas classificados corretamente a partir deste passo')
 
+    total_acertos = 0
     for i in range(1, len(nomes)):
         #np.set_printoptions(threshold=np.inf)
         classified = nomes[np.logical_and(vacertos[i,:]==1, vacertos[i,:]!= vacertos[i-1,:])]
-        print(str(i) + ': ' + str(int(nacertos[i])) + ' ' + str(classified))
+        total_acertos += len(classified)
+        percent_n = (100*total_acertos) / len(nomes)
+        print(f"{i}: {nacertos[i]:.0f} {classified}  Total = {total_acertos} ({percent_n:.0f}%)")
         if i > 15 and classified.size > 0   :
             ax.text(i,nacertos[i], str(classified))
 
