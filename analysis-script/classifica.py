@@ -10,31 +10,47 @@ def carregacsvs(arq1, arq2):
     df1 = pandas.read_csv(arq1)
     nomes1 = df1['nome'].to_numpy()
     slopes1 = df1['slopes'].to_numpy()
+    try:
+        lincoeff1 = df1['lincoeff'].to_numpy()
+    except:
+        lincoeff1 = np.zeros(len(slopes1))
 
     df2 = pandas.read_csv(arq2)
     nomes2 = df2['nome'].to_numpy()
     slopes2 = df2['slopes'].to_numpy()
+    try:
+        lincoeff2 = df2['lincoeff'].to_numpy()
+    except:
+        lincoeff2 = np.zeros(len(slopes2))
 
     if not((nomes1 == nomes2).all):
         print('arquivos com nomes diferentes')
         exit()
-    return slopes1, slopes2, nomes1
+    return slopes1, slopes2, lincoeff1, lincoeff2, nomes1
 
 
-def classificaGeral(slopes1, slopes2):
+def classificaGeral(slopes1, slopes2, lincoeff1, lincoeff2):
     n = slopes1.size
     nacertos = np.zeros(n)
     vacertos = np.zeros((n, n))
     for i in range(n):
-        nacertos[i], vacertos[i,:] = classificaN(slopes1, slopes2, i)
+        nacertos[i], vacertos[i,:] = classificaN(slopes1, slopes2, lincoeff1, lincoeff2, i)
     return nacertos, vacertos
 
-def classificaN(slopes1, slopes2, N):
+def distancia(s, l, slopes, lincoeff):
+    diffs = (slopes - s)**2
+    diffl = (lincoeff - l)**2
+    difft = (diffs + diffl)**(1/2)
+    return difft
+
+
+def classificaN(slopes1, slopes2, lincoeff1, lincoeff2, N):
     n = slopes1.size
     acertou = np.zeros(n)
     for i in range(n):
-        p = slopes1[i]
-        diff = np.abs(slopes2 - p)
+        s = slopes1[i]
+        l = lincoeff1[i]
+        diff = distancia(s,l,slopes2,lincoeff2)
         acertou[i] = nmenor(diff, N, i)
     nacertos = np.sum(acertou)
     return nacertos, acertou
@@ -67,14 +83,16 @@ def imprimeaceretoproblemas(vacertos, nomes, ax):
         if i > 15 and classified.size > 0   :
             ax.text(i,nacertos[i], str(classified))
 
+########### main ##########
+
 arquivos = sys.argv
 narq = len(arquivos)
 
 arq1 = arquivos[1]
 arq2 = arquivos[2]
 
-slopes1, slopes2, nomes = carregacsvs(arq1, arq2)
-nacertos, vacertos = classificaGeral(slopes1, slopes2)
+slopes1, slopes2, lincoeff1, lincoeff2,  nomes = carregacsvs(arq1, arq2)
+nacertos, vacertos = classificaGeral(slopes1, slopes2, lincoeff1, lincoeff2)
 
 fig = plt.figure()
 ax = fig.add_subplot()
