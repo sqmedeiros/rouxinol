@@ -137,6 +137,9 @@ def recorta_primeira_linha(file):
 
 def extrai_params_linha(linha):
     params = linha.split()
+    if len(params) < 2:
+      write_log('Arquivo Experimentos.txt faltando parametros. Abortando!')
+      exit()
     exp = params[0]
     maq = params[1]
     if len(params) == 3:
@@ -159,6 +162,7 @@ def gera_makefiles():
 
 
 def prepara_novo_experimento():
+    write_log('Novo experimento')
     gera_makefiles()
     criaToProcess()
     turnXoff()
