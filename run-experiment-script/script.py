@@ -139,7 +139,9 @@ def extrai_params_linha(linha):
     params = linha.split()
     if len(params) < 2:
       write_log('Arquivo Experimentos.txt faltando parametros. Abortando!')
-      exit()
+      turnXon()
+      apaga_arquivo(experiments)
+      reinicia()
     exp = params[0]
     maq = params[1]
     if len(params) == 3:
