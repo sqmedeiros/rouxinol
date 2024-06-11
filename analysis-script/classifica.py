@@ -40,7 +40,7 @@ def classificaGeral(slopes1, slopes2, lincoeff1, lincoeff2):
 def distancia(s, l, slopes, lincoeff):
     diffs = (slopes - s)**2
     diffl = (lincoeff - l)**2
-    difft = (diffs + diffl)**(1/2)
+    difft = (alpha*diffs + (1-alpha)*diffl)**(1/2)
     return difft
 
 
@@ -65,17 +65,16 @@ def nmenor(diff, N, indiceproblema):
     return 0
     
 
-def grafico(nacertos):
+def grafico(nacertos,h):
+    plt.figure(h.number)
     n = nacertos.size
     x = range(0,n)
     plt.plot(x,nacertos)
     plt.grid()
     plt.yticks(np.arange(0, n+1, 1))
-    plt.show()
 
 def imprimeaceretoproblemas(vacertos, nomes, ax):
     print('numero de acertos em funcao de n e probelmas classificados corretamente a partir deste passo')
-
     total_acertos = 0
     for i in range(1, len(nomes)):
         #np.set_printoptions(threshold=np.inf)
@@ -85,6 +84,38 @@ def imprimeaceretoproblemas(vacertos, nomes, ax):
         if i > 15 and classified.size > 0   :
             ax.text(i,nacertos[i], str(classified))
 
+def vetornulo(v):
+    if sum(v) == 0:
+        return True
+    else:
+        return False
+
+def graficoespacoestados(slopes1, slopes2, lincoeff1, lincoeff2,  nomes, h):
+    plt.figure(h.number)
+    ax = h.add_subplot()
+    cont = 0
+    cont2 = 0
+    lincoeff1 = (1-alpha)*lincoeff1
+    lincoeff2 = (1-alpha)*lincoeff2
+    if vetornulo(lincoeff1):
+        lincoeff1 = np.linspace(0,1,32)
+        lincoeff2 = lincoeff1
+    for i in range(len(slopes1)):
+        plt.plot(slopes1[i],lincoeff1[i],estilos1[cont], color=cores[cont2])
+        plt.plot(slopes2[i],lincoeff2[i],estilos2[cont], color=cores[cont2])
+        plt.plot([slopes1[i],slopes2[i]],[lincoeff1[i],lincoeff2[i]],'--', color=cores[cont2])
+        ax.text(slopes1[i],lincoeff1[i], nomes[i])
+
+        cont = cont+1
+        cont2 = cont2+1
+
+        if cont % len(estilos1)==0:
+            cont = 0
+        if cont2 % len(cores)==0:
+            cont2 = 0
+
+
+
 ########### main ##########
 
 arquivos = sys.argv
@@ -93,12 +124,26 @@ narq = len(arquivos)
 arq1 = arquivos[1]
 arq2 = arquivos[2]
 
+#o quanto o slope importa mais que o b (e pra questao de escala tambem)
+alpha = 0.9999995
+
+
 slopes1, slopes2, lincoeff1, lincoeff2,  nomes = carregacsvs(arq1, arq2)
 nacertos, vacertos = classificaGeral(slopes1, slopes2, lincoeff1, lincoeff2)
 
-fig = plt.figure()
-ax = fig.add_subplot()
+h1 = plt.figure()
+ax = h1.add_subplot()
+h2 = plt.figure()
+
 
 imprimeaceretoproblemas(vacertos, nomes, ax)
-grafico(nacertos)
+grafico(nacertos, h1)
+
+cores = ['b','r','g','m','c','y','k','tab:brown','tab:orange','tab:purple','tab:gray']
+estilos1 = ['d','.','+']
+estilos2 = ['s','o','*']
+
+graficoespacoestados(slopes1, slopes2, lincoeff1, lincoeff2,  nomes, h2)
+
+plt.show()
 
