@@ -107,6 +107,8 @@ def graficoespacoestados(slopes1, slopes2, lincoeff1, lincoeff2,  nomes, h):
         cont = cont+1
         if cont % len(cores)==0:
             cont = 0
+    plt.xlabel("Normalized Slopes")
+    plt.ylabel("Normalized Linear Coeficients")
 
 def normalizapar(v1,v2):
     v12 = np.append(v1,v2)
@@ -120,24 +122,42 @@ def normalizapar(v1,v2):
     return v1, v2
 
 
-
 def normaliza(s1, s2, l1, l2):
     s1,s2 = normalizapar(s1,s2)
     l1,l2 = normalizapar(l1,l2)
     return s1,s2,l1,l2
 
+def equalizapar(v1,v2):
+    mv1 = np.mean(v1)
+    mv2 = np.mean(v2)
+    vdiff = mv1 - mv2
+    print(vdiff)
+    v2 = v2 + vdiff
+    return v2
+
+def equaliza(slopes1, slopes2, lincoeff1, lincoeff2):
+    slopes2 = equalizapar(slopes1, slopes2)
+    lincoeff2 = equalizapar(lincoeff1, lincoeff2)
+    return slopes1, slopes2, lincoeff1, lincoeff2
+
+def checkargs(narq):
+    if narq < 3:
+        print('usage: classifica.py <training.csv> <control.csv>')
+        exit()
+    return
 
 ########### main ##########
 
 arquivos = sys.argv
 narq = len(arquivos)
 
+checkargs(narq)
+
 arq1 = arquivos[1]
 arq2 = arquivos[2]
 
-#o quanto o slope importa mais que o b (e pra questao de escala tambem)
+#o quanto o slope importa mais que o b 
 alpha = 0.5
-
 
 slopes1, slopes2, lincoeff1, lincoeff2,  nomes = carregacsvs(arq1, arq2)
 if not(vetornulo(lincoeff1)):
