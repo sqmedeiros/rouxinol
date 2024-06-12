@@ -94,26 +94,37 @@ def graficoespacoestados(slopes1, slopes2, lincoeff1, lincoeff2,  nomes, h):
     plt.figure(h.number)
     ax = h.add_subplot()
     cont = 0
-    cont2 = 0
-    lincoeff1 = (1-alpha)*lincoeff1
-    lincoeff2 = (1-alpha)*lincoeff2
+    #lincoeff1 = (1-alpha)*lincoeff1
+    #lincoeff2 = (1-alpha)*lincoeff2
     if vetornulo(lincoeff1):
         lincoeff1 = np.linspace(0,1,32)
         lincoeff2 = lincoeff1
     for i in range(len(slopes1)):
-        plt.plot(slopes1[i],lincoeff1[i],estilos1[cont], color=cores[cont2])
-        plt.plot(slopes2[i],lincoeff2[i],estilos2[cont], color=cores[cont2])
-        plt.plot([slopes1[i],slopes2[i]],[lincoeff1[i],lincoeff2[i]],'--', color=cores[cont2])
+        plt.plot(slopes1[i],lincoeff1[i],'o', color=cores[cont])
+        plt.plot(slopes2[i],lincoeff2[i],'s', color=cores[cont])
+        plt.plot([slopes1[i],slopes2[i]],[lincoeff1[i],lincoeff2[i]],'--', color=cores[cont])
         ax.text(slopes1[i],lincoeff1[i], nomes[i])
-
         cont = cont+1
-        cont2 = cont2+1
-
-        if cont % len(estilos1)==0:
+        if cont % len(cores)==0:
             cont = 0
-        if cont2 % len(cores)==0:
-            cont2 = 0
 
+def normalizapar(v1,v2):
+    v12 = np.append(v1,v2)
+    minv = np.min(v12)
+    v12 = v12-minv
+    maxv = np.max(v12)
+    v1 = v1 - minv
+    v2 = v2 - minv
+    v1 = v1/maxv
+    v2 = v2/maxv
+    return v1, v2
+
+
+
+def normaliza(s1, s2, l1, l2):
+    s1,s2 = normalizapar(s1,s2)
+    l1,l2 = normalizapar(l1,l2)
+    return s1,s2,l1,l2
 
 
 ########### main ##########
@@ -125,10 +136,12 @@ arq1 = arquivos[1]
 arq2 = arquivos[2]
 
 #o quanto o slope importa mais que o b (e pra questao de escala tambem)
-alpha = 0.9999995
+alpha = 0.5
 
 
 slopes1, slopes2, lincoeff1, lincoeff2,  nomes = carregacsvs(arq1, arq2)
+if not(vetornulo(lincoeff1)):
+    slopes1, slopes2, lincoeff1, lincoeff2 = normaliza(slopes1, slopes2, lincoeff1, lincoeff2)
 nacertos, vacertos = classificaGeral(slopes1, slopes2, lincoeff1, lincoeff2)
 
 h1 = plt.figure()
@@ -140,8 +153,6 @@ imprimeaceretoproblemas(vacertos, nomes, ax)
 grafico(nacertos, h1)
 
 cores = ['b','r','g','m','c','y','k','tab:brown','tab:orange','tab:purple','tab:gray']
-estilos1 = ['d','.','+']
-estilos2 = ['s','o','*']
 
 graficoespacoestados(slopes1, slopes2, lincoeff1, lincoeff2,  nomes, h2)
 
