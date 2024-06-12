@@ -12,6 +12,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 from scipy import stats
+import platform
+import glob
 
 
 def mmq(x,y):
@@ -87,7 +89,26 @@ def getsimpleflag(flag, flags,arquivos, narq):
         narq = narq-1
     return flags, arquivos, narq
 
-def getflags(arquivos, narq):
+def temasterisco(s):
+    if '*' in s:
+        return True
+    else:
+        return False
+        
+def listaarquivos(arquivos):
+    lista = glob.glob(arquivos)
+    return lista
+
+def expandeargumentos(arquivos):
+    for i in arquivos:
+        if temasterisco(i):
+            lista = listaarquivos(i)
+            arquivos.remove(i)
+            for j in lista:
+                arquivos.append(j)
+    return arquivos
+
+def getflags(arquivos, narq, so):
     '''
     wmmq = weitghted mmq
     tclock = usar tempo do wall clock (o default é usar a soma do user+sys)
@@ -95,6 +116,9 @@ def getflags(arquivos, narq):
     rout = remove outliers and compue slope again
     b = compute ax+b with mmq
     '''
+    if so == 'Windows':
+        arquivos = expandeargumentos(arquivos)
+
     vflags = ['wmmq','tclock','perf','rout','b']
     flags = {}
     
@@ -122,7 +146,7 @@ def getflags(arquivos, narq):
         arquivos.remove('-nsolutions')
         narq = narq-2
 
-    return flags, narq, nexec
+    return flags, narq, nexec, arquivos
 
 def criarelatorio(arquivoscurtos):
     try:
@@ -290,8 +314,10 @@ def calculaajuste(vmtempo, vmconsumo, vdconsumo, flags):
     else:
         if flags['b']:
             a,b = mmq(vmtempo, vmconsumo)
+            a = ajusteax(vmtempo, vmconsumo) #faz novamente pra ficar o slope sem considerar o b
         else:
             a = ajusteax(vmtempo, vmconsumo)
+        
     return a,b
 
 
@@ -337,18 +363,30 @@ def shapiro(verr, file):
         file.write('\t\tNão podemos afirmar que segue uma distribuição normal' + '\n')
     return rshapwilk
 
-def pearson(vmconsumo, sse, file, arquivo, Vr2):
+def pearson(vmtempo,vmconsumo, sse, file, arquivo, Vr2):
     nvarr = np.sum((vmconsumo - vmconsumo.mean())**2)
 
-    #coeficiente de correlacao de Pearson
-    coeffP =  (nvarr - sse)/nvarr
+
+    #coeficiente R2
+    #coeffP =  (nvarr - sse)/nvarr
+
+    #Coeficiente de pearson pelo pandas
+    d = { 'tempo_medio':vmtempo, 'consumo_medio': vmconsumo}
+    ds = pandas.DataFrame(data=d)
+    corrmat = ds.corr(method='pearson')
+    coeffP = corrmat.values[0,1]
+    
     print('Coeficiente R2: ', coeffP)
     file.write(arquivo + '\n')
     file.write('Coeficiente R2: '+ str(coeffP)+ '\n')
     Vr2.append(coeffP)
+
+    
+
     return coeffP, Vr2
 
 def spearman(ds, file):
+    '''
     #coeficiente de correlacao de Spearman
     ds = ds.sort_values('tempo_medio')
     ds['rank_tempo'] = ds['tempo_medio'].rank()
@@ -358,6 +396,17 @@ def spearman(ds, file):
     print('Coeficiente Spearman: ',coeffS)
     file.write('Coeficiente Spearman: '+ str(coeffS)+ '\n')
     Vspearman.append(coeffS)
+    '''
+    
+    d = { 'tempo_medio':ds['tempo_medio'], 'consumo_medio': ds['consumo_medio']}
+    ds = pandas.DataFrame(data=d)
+    corrmat = ds.corr(method='spearman')
+    coeffS = corrmat.values[0,1]
+    print('Coeficiente Spearman: ',coeffS)
+    file.write('Coeficiente Spearman: '+ str(coeffS)+ '\n')
+    Vspearman.append(coeffS)
+    
+
     return coeffS, Vspearman
 
 def plotarestasdesvio(xr,yr,sigout,desvioerro,cor,h):
@@ -589,6 +638,9 @@ def removeoutliers(ind, vmtempo, vmconsumo, vdconsumo):
 
 ########   main   ##################
 
+sistemaoperacional = platform.system()
+print('Executing on ', sistemaoperacional)
+
 arquivos = sys.argv
 narq = checkargs(arquivos)
 
@@ -603,7 +655,7 @@ nsigma = 2
 h1 = plt.figure()
 h2 = plt.figure()
 
-flags, narq, nexec = getflags(arquivos, narq)
+flags, narq, nexec, arquivos = getflags(arquivos, narq, sistemaoperacional)
 
 arquivos = removeinitialditdash(arquivos)
 arquivoscurtos = getshortnames(arquivos)
@@ -633,7 +685,7 @@ for i in range(1,len(arquivos)):
     vnome, vmconsumo, vdconsumo, vmtempo, vdtempo, vmtsoma, vdtsoma =  carregaordenadonome(ds)
     salvaresumoordenado(d,arquivos[i])
     vmtempo, vdtempo = diferencatempos(ncolunas, vmtempo, vdtempo, vmtsoma, flags)
-
+    
     a,b = calculaajuste(vmtempo, vmconsumo, vdconsumo, flags)
 
     indest = (i-1)%7
@@ -643,7 +695,7 @@ for i in range(1,len(arquivos)):
     plotarestasdesvio(xr,yr,sigout,desvioerro,cores[indest],h2)
 
     rshapwilk = shapiro(verr, file)
-    coeffP, Vr2 = pearson(vmconsumo, sse, file, arquivos[i], Vr2)
+    coeffP, Vr2 = pearson(vmtempo,vmconsumo, sse, file, arquivos[i], Vr2)
     coeffS, Vspearman = spearman(ds, file)
 
     outliers = detectaoutliers(outliers,vmtempo,vmconsumo,vdtempo,vdconsumo,sigout,desvioerro,verr,vnome, cores[indest],h2)

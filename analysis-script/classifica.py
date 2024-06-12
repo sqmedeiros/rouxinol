@@ -40,7 +40,7 @@ def classificaGeral(slopes1, slopes2, lincoeff1, lincoeff2):
 def distancia(s, l, slopes, lincoeff):
     diffs = (slopes - s)**2
     diffl = (lincoeff - l)**2
-    difft = (diffs + diffl)**(1/2)
+    difft = (alpha*diffs + (1-alpha)*diffl)**(1/2)
     return difft
 
 
@@ -65,17 +65,16 @@ def nmenor(diff, N, indiceproblema):
     return 0
     
 
-def grafico(nacertos):
+def grafico(nacertos,h):
+    plt.figure(h.number)
     n = nacertos.size
     x = range(0,n)
     plt.plot(x,nacertos)
     plt.grid()
     plt.yticks(np.arange(0, n+1, 1))
-    plt.show()
 
 def imprimeaceretoproblemas(vacertos, nomes, ax):
     print('numero de acertos em funcao de n e probelmas classificados corretamente a partir deste passo')
-
     total_acertos = 0
     for i in range(1, len(nomes)):
         #np.set_printoptions(threshold=np.inf)
@@ -85,20 +84,97 @@ def imprimeaceretoproblemas(vacertos, nomes, ax):
         if i > 15 and classified.size > 0   :
             ax.text(i,nacertos[i], str(classified))
 
+def vetornulo(v):
+    if sum(v) == 0:
+        return True
+    else:
+        return False
+
+def graficoespacoestados(slopes1, slopes2, lincoeff1, lincoeff2,  nomes, h):
+    plt.figure(h.number)
+    ax = h.add_subplot()
+    cont = 0
+    #lincoeff1 = (1-alpha)*lincoeff1
+    #lincoeff2 = (1-alpha)*lincoeff2
+    if vetornulo(lincoeff1):
+        lincoeff1 = np.linspace(0,1,32)
+        lincoeff2 = lincoeff1
+    for i in range(len(slopes1)):
+        plt.plot(slopes1[i],lincoeff1[i],'o', color=cores[cont])
+        plt.plot(slopes2[i],lincoeff2[i],'s', color=cores[cont])
+        plt.plot([slopes1[i],slopes2[i]],[lincoeff1[i],lincoeff2[i]],'--', color=cores[cont])
+        ax.text(slopes1[i],lincoeff1[i], nomes[i])
+        cont = cont+1
+        if cont % len(cores)==0:
+            cont = 0
+    plt.xlabel("Normalized Slopes")
+    plt.ylabel("Normalized Linear Coeficients")
+
+def normalizapar(v1,v2):
+    v12 = np.append(v1,v2)
+    minv = np.min(v12)
+    v12 = v12-minv
+    maxv = np.max(v12)
+    v1 = v1 - minv
+    v2 = v2 - minv
+    v1 = v1/maxv
+    v2 = v2/maxv
+    return v1, v2
+
+
+def normaliza(s1, s2, l1, l2):
+    s1,s2 = normalizapar(s1,s2)
+    l1,l2 = normalizapar(l1,l2)
+    return s1,s2,l1,l2
+
+def equalizapar(v1,v2):
+    mv1 = np.mean(v1)
+    mv2 = np.mean(v2)
+    vdiff = mv1 - mv2
+    print(vdiff)
+    v2 = v2 + vdiff
+    return v2
+
+def equaliza(slopes1, slopes2, lincoeff1, lincoeff2):
+    slopes2 = equalizapar(slopes1, slopes2)
+    lincoeff2 = equalizapar(lincoeff1, lincoeff2)
+    return slopes1, slopes2, lincoeff1, lincoeff2
+
+def checkargs(narq):
+    if narq < 3:
+        print('usage: classifica.py <training.csv> <control.csv>')
+        exit()
+    return
+
 ########### main ##########
 
 arquivos = sys.argv
 narq = len(arquivos)
 
+checkargs(narq)
+
 arq1 = arquivos[1]
 arq2 = arquivos[2]
 
+#o quanto o slope importa mais que o b 
+alpha = 0.5
+
 slopes1, slopes2, lincoeff1, lincoeff2,  nomes = carregacsvs(arq1, arq2)
+if not(vetornulo(lincoeff1)):
+    slopes1, slopes2, lincoeff1, lincoeff2 = normaliza(slopes1, slopes2, lincoeff1, lincoeff2)
 nacertos, vacertos = classificaGeral(slopes1, slopes2, lincoeff1, lincoeff2)
 
-fig = plt.figure()
-ax = fig.add_subplot()
+h1 = plt.figure()
+ax = h1.add_subplot()
+h2 = plt.figure()
+
 
 imprimeaceretoproblemas(vacertos, nomes, ax)
-grafico(nacertos)
+grafico(nacertos, h1)
+
+cores = ['b','r','g','m','c','y','k','tab:brown','tab:orange','tab:purple','tab:gray']
+
+graficoespacoestados(slopes1, slopes2, lincoeff1, lincoeff2,  nomes, h2)
+
+plt.show()
 
