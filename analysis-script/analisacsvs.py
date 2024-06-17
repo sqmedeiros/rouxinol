@@ -701,8 +701,11 @@ for i in range(1,len(arquivos)):
     outliers = detectaoutliers(outliers,vmtempo,vmconsumo,vdtempo,vdconsumo,sigout,desvioerro,verr,vnome, cores[indest],h2)
 
     if flags['rout']:
-        nvmtempo, nvmconsumo, nvdconsumo = removeoutliers(outliers['indsel'][i], vmtempo, vmconsumo, vdconsumo)
+        idx = (i - 1) * 3 + 2
+        print(f"Arquivo {arquivos[i]} outliers = {outliers['indsel'][i]} ->  {outliers['indsel'][idx]} -> todos {outliers}")
+        nvmtempo, nvmconsumo, nvdconsumo = removeoutliers(outliers['indsel'][idx], vmtempo, vmconsumo, vdconsumo)
         a,b = calculaajuste(nvmtempo, nvmconsumo, nvdconsumo, flags)
+        
 
     #armazena slope e tempo medio da solucao
     slopes.append(a)
