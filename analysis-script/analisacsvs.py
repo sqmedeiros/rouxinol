@@ -633,9 +633,10 @@ def removeoutliers(ind, vmtempo, vmconsumo, vdconsumo, tail=False):
     vmtempo_ord = sorted(vmtempo, reverse=True)
     max1 = vmtempo_ord[0]
     max2 = vmtempo_ord[1]
+    ratio = 1.5
     for i in ind:
-        if not tail or (vmtempo[i] == max1 and max1 >= 1.5 * max2):
-            print(f"removing outliers max vmtempo {max1}, current = {vmtempo[i]} i = {i}")
+        if not tail or (vmtempo[i] == max1 and max1 >= ratio * max2):
+            #print(f"removing outliers max vmtempo {max1}, current = {vmtempo[i]} i = {i}")
             vmtempo = np.delete(vmtempo, i-cont) #cada vez que remove 1, os indices diminuem em 1
             vmconsumo = np.delete(vmconsumo, i-cont)
             vdconsumo = np.delete(vdconsumo, i-cont)
