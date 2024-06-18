@@ -77,7 +77,7 @@ def getexperimentname(arquivos):
 def checkargs(arquivos):
     narq = len(arquivos)
     if  narq < 2: #o primeiro argumento é o nome do proprio script
-        print('usage: analisacsv file1_machine1.csv file2_machine1.csv ... file1_machine2.csv file2_machine2.csv... ... <-wmmq> <-tclock> <-nexec n1> <-nsolustions n2> <-rout> <-b>')
+        print('usage: analisacsv file1_machine1.csv file2_machine1.csv ... file1_machine2.csv file2_machine2.csv... ... <-wmmq> <-tclock> <-nexec n1> <-nsolustions n2> <-rout> <-rtail> <-b>')
         exit()          
     return narq
 
@@ -113,13 +113,14 @@ def getflags(arquivos, narq, so):
     wmmq = weitghted mmq
     tclock = usar tempo do wall clock (o default é usar a soma do user+sys)
     perf = somar pkg e ram dados pelo perf
-    rout = remove outliers and compue slope again
+    rout = remove outliers and compute slope again
+    tail = remove the longest executing program if it is an outlier and compute slope again
     b = compute ax+b with mmq
     '''
     if so == 'Windows':
         arquivos = expandeargumentos(arquivos)
 
-    vflags = ['wmmq','tclock','perf','rout','b']
+    vflags = ['wmmq','tclock','perf','rout','rtail','b']
     flags = {}
     
     for i in vflags:
@@ -626,14 +627,20 @@ def imprimesalvainfo(slopes,lincoeff,tempomedio,consumomedio,arquivoscurtos,expe
     file.write("\n")
 
 
-def removeoutliers(ind, vmtempo, vmconsumo, vdconsumo):
+def removeoutliers(ind, vmtempo, vmconsumo, vdconsumo, tail=False):
     cont = 0
     print(ind)
+    vmtempo_ord = sorted(vmtempo, reverse=True)
+    max1 = vmtempo_ord[0]
+    max2 = vmtempo_ord[1]
+    ratio = 1.5
     for i in ind:
-        vmtempo = np.delete(vmtempo, i-cont) #cada vez que remove 1, os indices diminuem em 1
-        vmconsumo = np.delete(vmconsumo, i-cont)
-        vdconsumo = np.delete(vdconsumo, i-cont)
-        cont = cont + 1
+        if not tail or (vmtempo[i] == max1 and max1 >= ratio * max2):
+            #print(f"removing outliers max vmtempo {max1}, current = {vmtempo[i]} i = {i}")
+            vmtempo = np.delete(vmtempo, i-cont) #cada vez que remove 1, os indices diminuem em 1
+            vmconsumo = np.delete(vmconsumo, i-cont)
+            vdconsumo = np.delete(vdconsumo, i-cont)
+            cont = cont + 1
     return vmtempo, vmconsumo, vdconsumo
 
 ########   main   ##################
@@ -700,9 +707,12 @@ for i in range(1,len(arquivos)):
 
     outliers = detectaoutliers(outliers,vmtempo,vmconsumo,vdtempo,vdconsumo,sigout,desvioerro,verr,vnome, cores[indest],h2)
 
-    if flags['rout']:
-        nvmtempo, nvmconsumo, nvdconsumo = removeoutliers(outliers['indsel'][i], vmtempo, vmconsumo, vdconsumo)
+    if flags['rout'] or flags['rtail']:
+        idx = (i - 1) * 3 + 2
+        #print(f"Arquivo {arquivos[i]} outliers = {outliers['indsel'][i]} ->  {outliers['indsel'][idx]} -> todos {outliers}")
+        nvmtempo, nvmconsumo, nvdconsumo = removeoutliers(outliers['indsel'][idx], vmtempo, vmconsumo, vdconsumo, tail=flags['rtail'])
         a,b = calculaajuste(nvmtempo, nvmconsumo, nvdconsumo, flags)
+        
 
     #armazena slope e tempo medio da solucao
     slopes.append(a)
