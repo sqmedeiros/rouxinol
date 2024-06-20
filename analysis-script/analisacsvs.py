@@ -375,7 +375,7 @@ def pearson(vmtempo,vmconsumo, sse, file, arquivo, Vr2):
     d = { 'tempo_medio':vmtempo, 'consumo_medio': vmconsumo}
     ds = pandas.DataFrame(data=d)
     corrmat = ds.corr(method='pearson')
-    coeffP = corrmat.values[0,1]
+    coeffP = corrmat.values[0,1]**2
     
     print('Coeficiente R2: ', coeffP)
     file.write(arquivo + '\n')
