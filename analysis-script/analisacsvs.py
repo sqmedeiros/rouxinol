@@ -114,13 +114,14 @@ def getflags(arquivos, narq, so):
     tclock = usar tempo do wall clock (o default é usar a soma do user+sys)
     perf = somar pkg e ram dados pelo perf
     rout = remove outliers and compute slope again
-    tail = remove the longest executing program if it is an outlier and compute slope again
+    rtail = remove the longest executing program if it is an outlier and compute slope again
     b = compute ax+b with mmq
+    sen = ao inves do mmq, usa theil-sen pra estimar a reta
     '''
     if so == 'Windows':
         arquivos = expandeargumentos(arquivos)
 
-    vflags = ['wmmq','tclock','perf','rout','rtail','b']
+    vflags = ['wmmq','tclock','perf','rout','rtail','b','sen']
     flags = {}
     
     for i in vflags:
@@ -305,20 +306,23 @@ def diferencatempos(ncolunas, vmtempo, vdtempo, vmtsoma, flags):
             vdtempo = vdtsoma
     return vmtempo, vdtempo
 
-
 def calculaajuste(vmtempo, vmconsumo, vdconsumo, flags):
     b = 0
-    #calcula reta tentendia y = ax
-    if flags['wmmq']:
-        a = mmqcompeso(vmtempo, vmconsumo, vdconsumo)
-        #a = mmqcompeso(vmtempo, vmconsumo, vdconsumo*vdtempo)
+    if flags['sen']:
+        a,b,lowslope,highslope = stats.theilslopes(vmconsumo, vmtempo)
+        if not flags['b']:
+            b = 0
     else:
-        if flags['b']:
-            a,b = mmq(vmtempo, vmconsumo)
-            a = ajusteax(vmtempo, vmconsumo) #faz novamente pra ficar o slope sem considerar o b
+        if flags['wmmq']:
+            a = mmqcompeso(vmtempo, vmconsumo, vdconsumo)
+            #a = mmqcompeso(vmtempo, vmconsumo, vdconsumo*vdtempo)
         else:
-            a = ajusteax(vmtempo, vmconsumo)
-        
+            if flags['b']:
+                a,b = mmq(vmtempo, vmconsumo)
+                a = ajusteax(vmtempo, vmconsumo) #faz novamente pra ficar o slope sem considerar o b
+            else:
+                a = ajusteax(vmtempo, vmconsumo)
+            
     return a,b
 
 
