@@ -69,20 +69,24 @@ def grafico(nacertos,h):
     plt.figure(h.number)
     n = nacertos.size
     x = range(0,n)
-    plt.plot(x,nacertos)
+    plt.plot(x,nacertos*100/n)
     plt.grid()
-    plt.yticks(np.arange(0, n+1, 1))
+    plt.yticks(np.arange(0, 101, 10))
+    plt.ylabel("Percentage correctly classified")
+    plt.xlabel("Number of tries")
+
 
 def imprimeaceretoproblemas(vacertos, nomes, ax):
     print('numero de acertos em funcao de n e probelmas classificados corretamente a partir deste passo')
     total_acertos = 0
-    for i in range(1, len(nomes)):
+    n = len(nomes)
+    for i in range(1, n):
         #np.set_printoptions(threshold=np.inf)
         classified = nomes[np.logical_and(vacertos[i,:]==1, vacertos[i,:]!= vacertos[i-1,:])]
-        percent_total = (100 * nacertos[i]) / len(nomes)
+        percent_total = (100 * nacertos[i]) / n
         print(f"{i}: {nacertos[i]:.0f} ({percent_total:.0f}%) {classified}")
         if i > 15 and classified.size > 0   :
-            ax.text(i,nacertos[i], str(classified))
+            ax.text(i,percent_total, str(classified))
 
 def vetornulo(v):
     if sum(v) == 0:
