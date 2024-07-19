@@ -65,24 +65,28 @@ def nmenor(diff, N, indiceproblema):
     return 0
     
 
-def grafico(nacertos,h):
+def grafico(nacertos, h, l, estilo):
     plt.figure(h.number)
     n = nacertos.size
     x = range(0,n)
-    plt.plot(x,nacertos)
+    plt.plot(x,nacertos*100/n,estilo,label=l)
     plt.grid()
-    plt.yticks(np.arange(0, n+1, 1))
+    plt.yticks(np.arange(0, 101, 10))
+    plt.ylabel("Percentage correctly classified")
+    plt.xlabel("Number of tries")
+
 
 def imprimeaceretoproblemas(vacertos, nomes, ax):
     print('numero de acertos em funcao de n e probelmas classificados corretamente a partir deste passo')
     total_acertos = 0
-    for i in range(1, len(nomes)):
+    n = len(nomes)
+    for i in range(1, n):
         #np.set_printoptions(threshold=np.inf)
         classified = nomes[np.logical_and(vacertos[i,:]==1, vacertos[i,:]!= vacertos[i-1,:])]
-        percent_total = (100 * nacertos[i]) / len(nomes)
+        percent_total = (100 * nacertos[i]) / n
         print(f"{i}: {nacertos[i]:.0f} ({percent_total:.0f}%) {classified}")
         if i > 15 and classified.size > 0   :
-            ax.text(i,nacertos[i], str(classified))
+            ax.text(i,percent_total, str(classified))
 
 def vetornulo(v):
     if sum(v) == 0:
@@ -142,7 +146,7 @@ def equaliza(slopes1, slopes2, lincoeff1, lincoeff2):
 
 def checkargs(narq):
     if narq < 3:
-        print('usage: classifica.py <training.csv> <control.csv>')
+        print('usage: classifica.py <control1.csv> <training1.csv> <control2.csv> <training2.csv> ...')
         exit()
     return
 
@@ -153,28 +157,36 @@ narq = len(arquivos)
 
 checkargs(narq)
 
-arq1 = arquivos[1]
-arq2 = arquivos[2]
-
-#o quanto o slope importa mais que o b 
-alpha = 0.5
-
-slopes1, slopes2, lincoeff1, lincoeff2,  nomes = carregacsvs(arq1, arq2)
-if not(vetornulo(lincoeff1)):
-    slopes1, slopes2, lincoeff1, lincoeff2 = normaliza(slopes1, slopes2, lincoeff1, lincoeff2)
-nacertos, vacertos = classificaGeral(slopes1, slopes2, lincoeff1, lincoeff2)
-
 h1 = plt.figure()
 ax = h1.add_subplot()
 h2 = plt.figure()
 
+#o quanto o slope importa mais que o b 
+alpha = 0.5
 
-imprimeaceretoproblemas(vacertos, nomes, ax)
-grafico(nacertos, h1)
+label = ['HPELITE','HPTHINK','HPELITE removing tail','HPTHINK removing tail']
+estilo = ['b','r','b--','r--']
 
-cores = ['b','r','g','m','c','y','k','tab:brown','tab:orange','tab:purple','tab:gray']
 
-graficoespacoestados(slopes1, slopes2, lincoeff1, lincoeff2,  nomes, h2)
+for i in range(1,narq-1,2):
 
+    arq1 = arquivos[i]
+    arq2 = arquivos[i+1]  
+
+    slopes1, slopes2, lincoeff1, lincoeff2,  nomes = carregacsvs(arq1, arq2)
+    if not(vetornulo(lincoeff1)):
+        slopes1, slopes2, lincoeff1, lincoeff2 = normaliza(slopes1, slopes2, lincoeff1, lincoeff2)
+    nacertos, vacertos = classificaGeral(slopes1, slopes2, lincoeff1, lincoeff2)
+
+    imprimeaceretoproblemas(vacertos, nomes, ax)
+    grafico(nacertos, h1, label[int(i/2)],estilo[int(i/2)])
+
+    cores = ['b','r','g','m','c','y','k','tab:brown','tab:orange','tab:purple','tab:gray']
+
+    graficoespacoestados(slopes1, slopes2, lincoeff1, lincoeff2,  nomes, h2)
+
+plt.figure(h1.number)
+plt.title('Classification success')
+plt.legend(loc='lower right')
 plt.show()
 
