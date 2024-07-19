@@ -1,0 +1,10 @@
+compile: $(patsubst %.cpp, %.exe, $(wildcard *.cpp))
+
+%.exe: %.cpp Makefile
+	javac $<
+	sudo modprobe msr
+	../../RAPL-time/main "java $@ < "  "$(TEST)" "$(OUTPUT)" ../$(PROBLEM) $@
+	
+clean:
+	rm *.exe
+
