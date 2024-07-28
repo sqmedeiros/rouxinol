@@ -121,7 +121,7 @@ def getflags(arquivos, narq, so):
     if so == 'Windows':
         arquivos = expandeargumentos(arquivos)
 
-    vflags = ['wmmq','tclock','perf','rout','rtail','b','sen']
+    vflags = ['wmmq','tclock','perf','rout','rtail','b','sen','nobaseline']
     flags = {}
     
     for i in vflags:
@@ -223,6 +223,10 @@ def checknegative(pkg, t):
         print('Valor negativo detectado. Abortando!')
         exit()
 
+def removeBaseline(mediaconsumo, mediatempo):
+    mediaconsumo = mediaconsumo - mediatempo*baselineslope
+    return mediaconsumo
+
 def calculamedias(df, ncolunas, nlinhas, nexec, flags, file):
 
     print('processando ',arquivos[i])
@@ -263,6 +267,7 @@ def calculamedias(df, ncolunas, nlinhas, nexec, flags, file):
         desviotempo = t.std()
         mediatemposoma = tsomausersys.mean()
         desviotemposoma = tsomausersys.std()
+        mediaconsumo = removeBaseline(mediaconsumo, mediatempo)
         vmconsumo[cont] = mediaconsumo
         vdconsumo[cont] = desvioconsumo
         vmtempo[cont] = mediatempo
@@ -647,6 +652,18 @@ def removeoutliers(ind, vmtempo, vmconsumo, vdconsumo, tail=False):
             cont = cont + 1
     return vmtempo, vmconsumo, vdconsumo
 
+def setbaselineslope(experimentname, flags):
+    if flags['nobaseline']:
+        return 0
+    if experimentname.find('elite') >= 0:
+        print('removing baseline for experiment in elite machine')
+        return baselineslopeelite
+    elif experimentname.find('think') >= 0:
+        print('removing baseline for experiment in think machine')
+        return baselineslopethik
+    else:
+        return 0
+
 ########   main   ##################
 
 sistemaoperacional = platform.system()
@@ -687,10 +704,14 @@ gorduras = []
 #listas com pontos de interesse (outliers)
 outliers = crialistaoutliers()
 
+baselineslopeelite = 0.000470713037088506
+baselineslopethik = 0.004206933889974837
+
 
 for i in range(1,len(arquivos)):
     nestilo = incrementaestilo(nestilo,i)
     df, ncolunas, nlinhas, nexec = carregacsv(arquivos[i], flags, nexec)
+    baselineslope = setbaselineslope(arquivos[i],flags)
     vnome, vmconsumo, vdconsumo, vmtempo, vdtempo, vmtsoma, vdtsoma = calculamedias(df, ncolunas, nlinhas, nexec, flags, file)
     ds, d = salvaresumo(arquivos[i],vnome, vmconsumo, vdconsumo, vmtempo,vdtempo, vmtsoma, vdtsoma)
     vnome, vmconsumo, vdconsumo, vmtempo, vdtempo, vmtsoma, vdtsoma =  carregaordenadonome(ds)
