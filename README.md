@@ -1,6 +1,5 @@
-# rouxinol
-
 Dataset with C++ solutions for problems from CSES.
 
-We will try to associate a C++ solution to a given problem based on its energy profile
-and also on the classification indicated by the Rouxinol engine.
+We try to classify a set of C++ solution based on its energy profile.
+
+To run an experiment, see the file `readme.txt` in folder `run-experiment-script`
