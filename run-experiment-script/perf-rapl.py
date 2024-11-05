@@ -4,31 +4,14 @@ import sys
 import csv
 from datetime import datetime
 
+# time sudo perf stat -a -o temp.txt -x ';' -e power/energy-pkg/,cpu-cycles,user_time,system_time ./a.out < ../test/entry01.txt > /dev/null 
+
 csv.field_size_limit(sys.maxsize)
 
-NRUNS = 10
+NRUNS = 1
 perf_flag_prefix = "power/energy-"
 
-# perf power options
-# power/energy-cores/, power/energy-gpu/, power/energy-pkg/, power/energy-psys/, power/energy-ram/
 
-flag_pkg = "power/energy-pkg/"
-flag_ram = "power/energy-ram/"
-flag_user_time = "user_time"
-flag_sys_time = "system_time"
-
-
-def get_perf_flag ():
-  #using "all_cpus" otherwise perf does not return measurements related to the energy flags
-  perf_flag = f"{flag_pkg},{flag_ram},{flag_user_time},{flag_sys_time} --all-cpus"
-  #adding flag_pkg again to indicate the beginning of the measurements
-  perf_flag = f"{flag_pkg},{perf_flag}"
-  print(f"perf_flag = {perf_flag}")
-  return perf_flag
-
-
-# A CSV entry should have 8 columns
-# 1 Name ; 2 RAPL Pkg ; 3 RAPL Cores ; 4 RAPL RAM ; 5 RAPL GPU ; 6 Total Time; 7 User Time; 8 Sys Time
 def make_new_csv_entry (csv_file, entry_data):  
 
   print(f"Nova medição {', '.join(entry_data)}\n")
@@ -69,11 +52,12 @@ def get_measurements (reader, measurements):
 
 def run_test (prog, output, csv_file, test_file, measurements):
   tmp_output = "saida.csv"
+  dev_null = "/dev/null"
   if os.path.isfile(tmp_output):
     os.remove(tmp_output)
 
-  power_flag = get_perf_flag()
-  cmd_test = f"perf stat -x ';' -e {power_flag} {prog} {test_file} {output} 2>>{tmp_output}"
+  str_events = ','.join(events_list)
+  cmd_test = f"perf stat -a -o {tmp_output} -x ';' -e {str_events} {prog} {test_file} {output} 2>>{dev_null}"
   print(f"Executing {cmd_test}")
   os.system(cmd_test)
 
@@ -103,6 +87,11 @@ csv_entry = sys.argv[4]
 tests = sys.argv[5].strip().split(" ")
                #pkg, ram, cpu_time  
 
+
+with open("events.txt", 'r') as event_file:
+  events_list = event_file.read().strip().split('\n')
+
+	
 for i in range(NRUNS):
   measurements = {"pkg": 0, "ram": 0, "clock_time" : 0, "user_time" : 0, "sys_time" : 0 }
   for test in tests:
