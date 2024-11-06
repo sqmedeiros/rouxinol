@@ -12,12 +12,23 @@ NRUNS = 1
 perf_flag_prefix = "power/energy-"
 
 
-def make_new_csv_entry (csv_file, entry_data):  
+def make_head_csv (csv_file, events):
+  if os.path.isfile(csv_file):
+    return
+    
+  fields = [ "file" ] + events
+  entry_data = ','.join(fields)
+  with open(csv_file, "a+") as f:
+    f.write(entry_data)
+    f.write("\n")
+      
 
-  print(f"Nova medição {', '.join(entry_data)}\n")
+def make_new_csv_entry (csv_file, values):   
+  entry_data = ','.join(map(str, values))
+  print(f"Nova medição {entry_data}\n")
   
   with open(csv_file, "a+") as f:
-     f.write(", ".join(entry_data))
+     f.write(entry_data)
      f.write("\n")
 
 
@@ -28,26 +39,31 @@ def is_perf_measurement (l):
   return False
 
 
+def is_valid_value (x):
+  return x != "<not supported>"
+
+
+def get_measurement (row):
+  value = row[0]
+  
+  value = value.replace(",", ".")
+  
+  if is_valid_value(value):
+    if '.' in value:
+      value = float(value)
+    else:
+      value = int(value)
+    
+  return value
+
+
 def get_measurements (reader, measurements):
-  row = next(reader)
-  pkg = float(row[0].replace(",", "."))
-  measurements["pkg"] += pkg
-
-  # uses the time associated with the first measure as the clock time
-  clock_time = int(row[3])
-  measurements["clock_time"] += clock_time
-
-  row = next(reader)
-  ram = float(row[0].replace(",", "."))
-  measurements["ram"] += ram
-
-  row = next(reader)
-  user_time = int(row[0])
-  measurements["user_time"] += user_time
-
-  row = next(reader, "0")
-  sys_time = int(row[0])
-  measurements["sys_time"] += sys_time
+  for x in measurements.keys():
+    value = get_measurement(next(reader))
+    if is_valid_value(value):
+       measurements[x] += value
+    else:
+       measurements[x] = value
 
 
 def run_test (prog, output, csv_file, test_file, measurements):
@@ -63,12 +79,12 @@ def run_test (prog, output, csv_file, test_file, measurements):
 
   with open(tmp_output, newline='') as csvfile:
     reader = csv.reader(csvfile, delimiter=';')
-    while True:
-      row = next(reader)
-      print(f"Row {row} first = {is_perf_measurement(row)}")
-      if is_perf_measurement(row):  # begin of perf measurement (extra pkg measurement)
-        get_measurements(reader, measurements)
-        break
+    # Information about date/time
+    row = next(reader)
+    # Empty row
+    row = next(reader)
+    get_measurements(reader, measurements)
+ 
 
   print(f"Finished test: {measurements}")
 
@@ -91,23 +107,16 @@ tests = sys.argv[5].strip().split(" ")
 with open("events.txt", 'r') as event_file:
   events_list = event_file.read().strip().split('\n')
 
+
+make_head_csv(csv_file, events_list)
 	
 for i in range(NRUNS):
-  measurements = {"pkg": 0, "ram": 0, "clock_time" : 0, "user_time" : 0, "sys_time" : 0 }
+  measurements = {}
+  for x in events_list:
+    measurements[x] = 0
+
   for test in tests:
     run_test(exe_prog, output, csv_file, test, measurements)
 
-  pkg = measurements["pkg"]
-  ram = measurements["ram"]
-  clock_time = measurements["clock_time"]  # time in nanoseconds (10^9)
-  user_time = measurements["user_time"]  # time in nanoseconds (10^9)
-  sys_time = measurements["sys_time"]  # time in nanoseconds (10^9)
-
-  clock_time = clock_time / pow(10, 6)  # Nanosecons -> Miliseconds
-  user_time = user_time / pow(10, 6)  # Nanosecons -> Miliseconds
-  sys_time = sys_time / pow(10, 6)  # Nanosecons -> Miliseconds
-
-  #name   #pkg  #core #ram  #gpu #time
-  entry_data = [ csv_entry, f"{pkg:7.2f}", "", f"{ram:6.2f}", "", f"{clock_time:5.0f}", f"{user_time:5.0f}", f"{sys_time:5.0f}" ]
-  make_new_csv_entry(csv_file, entry_data)   
+  make_new_csv_entry(csv_file, [csv_entry] + list(measurements.values()))   
 
