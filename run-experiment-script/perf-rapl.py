@@ -40,7 +40,7 @@ def is_perf_measurement (l):
 
 
 def is_valid_value (x):
-  return x != "<not supported>"
+  return x != "<not supported>" and x != "<not counted>"
 
 
 def get_measurement (row):
