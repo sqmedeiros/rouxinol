@@ -86,14 +86,16 @@ def run_test (prog, output, csv_file, test_file, measurements):
     get_measurements(reader, measurements)
  
 
-  print(f"Finished test: {measurements}")
+  #print(f"Finished test:")
+  #for k, v in measurements.items():
+  #  print(f"{k}: {v}")
 
 
 print(sys.argv)
-for v in sys.argv:
-  print(f"v {v}")
-print(len(sys.argv))
-print(sys.argv[0])
+#for v in sys.argv:
+#  print(f"v {v}")
+#print(len(sys.argv))
+#print(sys.argv[0])
 
 exe_prog = sys.argv[1]
 output = sys.argv[2]
@@ -104,7 +106,7 @@ tests = sys.argv[5].strip().split(" ")
                #pkg, ram, cpu_time  
 
 
-with open("events.txt", 'r') as event_file:
+with open("../../events-supported.txt", 'r') as event_file:
   events_list = event_file.read().strip().split('\n')
 
 
@@ -115,6 +117,7 @@ for i in range(NRUNS):
   for x in events_list:
     measurements[x] = 0
 
+  tests = tests[:1]
   for test in tests:
     run_test(exe_prog, output, csv_file, test, measurements)
 
