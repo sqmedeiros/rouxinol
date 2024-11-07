@@ -1,5 +1,3 @@
-user_time
-system_time
 cpu-cycles
 instructions
 cache-references
@@ -23,3 +21,5 @@ dTLB-stores
 dTLB-store-misses
 iTLB-loads
 iTLB-load-misses
+user_time
+system_time

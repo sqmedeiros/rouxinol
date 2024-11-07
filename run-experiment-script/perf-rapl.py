@@ -59,7 +59,12 @@ def get_measurement (row):
 
 def get_measurements (reader, measurements):
   for x in measurements.keys():
-    value = get_measurement(next(reader))
+    # system time may not be measured, so "0" is provided as a default value
+    # It must be the last event in the list of events
+    if x == "system_time":
+      value = get_measurement(next(reader, "0"))
+    else:
+       value = get_measurement(next(reader))
     if is_valid_value(value):
        measurements[x] += value
     else:
