@@ -28,52 +28,20 @@ def listaarquivos(arquivos):
     return lista
 
 
-def criarelatorio(arquivoscurtos):
-    try:
-        os.mkdir('analysis_results')
-        print('cirando diretorio de resultados')
-    except OSError as error:
-        print('diretorio de resultados ja existe') 
-    file = open("analysis_results/relatorio" + ''.join(arquivoscurtos[0:]) + ".txt", "w")
-    return file
+def pegaatributos(file):
+    with open(file, 'r+') as f:
+        firstLine = f.readline() 
+        firstLine = firstLine.rstrip('\n')
+        f.close()
+        return firstLine.split(',')
 
-
-def carregacsv(arquivo, flags, nexec):
-
-    print('carregando ',arquivo)
-    #carrega sem nomes de colunas pra descobrir quantas colunas tem
-    dfsemnomes = pandas.read_csv(arquivo)
-    ncolunas = len(dfsemnomes. columns)
-    if ncolunas == 6:
-        df = pandas.read_csv(arquivo,names=['codigo', 'pkg','cpu', 'n1','n2','tempo'])
-    else:
-        df = pandas.read_csv(arquivo,names=['codigo', 'pkg','cpu', 'n1','n2','tempo','tuser','tsys'])
-        print('mais colunas de tempo detectadas')
-
-    df, nexec = OrderbynameandComputenexec(df,flags['computenexec'],nexec)
-
-    #calcular a média e variancia das nexec execucoes de cada codigo
-    nlinhas = len(df)
-    if flags['usensolutions']:
-            checknumberofexecutionsandsolutions(nlinhas,nexec,flags['nsolutions'])
-
-    return df, ncolunas, nlinhas, nexec
-
-def salvaresumo(arquivo,vnome, vmconsumo, vdconsumo, vmtempo,vdtempo, vmtsoma, vdtsoma):
-
-    print('salvando resumo de  ',arquivo)
-    slopeindividual = vmconsumo/vmtempo
-    
-    d = {'nome': vnome, 'consumo_medio': vmconsumo, 'desvio_consumo':vdconsumo, 'tempo_medio':vmtempo, 'desvio_tempo':vdtempo, 'temposoma_medio':vmtsoma, 'desvio_temposoma':vdtsoma, 'slope_individual': slopeindividual}
-    ds = pandas.DataFrame(data=d)
-    ds = ds.sort_values('nome')
-    ds.to_csv('analysis_results/resumo' + arquivo)
-
-    return ds, d
 
 def cabecalho(lista):
     texto = "@relation problema\n"
     #le a primeira linha do primeiro arquivo pra pegar o nome dos atributos
+    atributos = pegaatributos(lista[0])
+    for i in range(1,len(atributos)):
+        texto += "@attribute '" + atributos[i] + "' real\n"
 
     #descobre quantos programas tem no diretorio
     listanumeroprogramas = ''
@@ -93,7 +61,24 @@ def escrevearquivo(texto, arquivodataset):
         f.write(texto) # write the data back
         f.truncate() # set the file size to the current size
         f.close()
-   
+
+def trata(l):
+    l = l.rstrip('\n')
+    l = l.replace("<not counted>", "?")
+    i = l.find(".exe")
+    return l[i+5:]
+
+def pegavalores(file, ind):
+    texto = ""
+    print("abrindo ", file)
+    with open(file, 'r+') as f:
+        firstLine = f.readline() # ignora a primeira linha
+        for linha in f:
+            linha = trata(linha)
+            texto += linha + "," + str(ind) + "\n"
+        f.close()
+    return texto
+
 
 ########   main   ##################
 arquivodataset = "dataset.arff"
@@ -102,17 +87,13 @@ print('Executing on ', sistemaoperacional)
 
 arquivos = sys.argv
 
-print(arquivos)
-
 lista = listaarquivos(arquivos[1])
 
 #texto do cabecalho do arquivo dataset.arff
 texto = cabecalho(lista)
 
+cont = 0
 for i in lista:
-     experimentNumber = i[0:4]
-     #abre o arquivo
-     #df = carregacsv(arquivos[i], flags, nexec)
-    
-
+     texto += pegavalores(i,cont)
+     cont +=1
 escrevearquivo(texto, arquivodataset)
