@@ -65,6 +65,7 @@ def escrevearquivo(texto, arquivodataset):
 def trata(l):
     l = l.rstrip('\n')
     l = l.replace("<not counted>", "?")
+    l = l.replace("<not supported>", "?")
     i = l.find(".exe")
     return l[i+5:]
 
