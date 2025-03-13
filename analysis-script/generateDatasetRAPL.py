@@ -29,11 +29,13 @@ def listaarquivos(arquivos):
 
 
 def pegaatributos(file):
-    with open(file, 'r+') as f:
+    """ with open(file, 'r+') as f:
         firstLine = f.readline() 
         firstLine = firstLine.rstrip('\n')
         f.close()
-        return firstLine.split(',')
+        return firstLine.split(',') """
+    atributos = "file,pkg,cpu,mem,gpu,wall_clock,user_time,system_time"
+    return atributos.split(',')
 
 
 def cabecalho(lista):
