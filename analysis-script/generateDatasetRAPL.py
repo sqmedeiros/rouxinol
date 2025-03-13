@@ -66,8 +66,12 @@ def escrevearquivo(texto, arquivodataset):
 
 def trata(l):
     l = l.rstrip('\n')
-    l = l.replace("<not counted>", "?")
-    l = l.replace("<not supported>", "?")
+    l = l.replace(' ','') #remove espacos
+
+    l = l.replace(",,", ",?,")
+    l = l.replace(",,", ",?,")
+    #l = l.replace("<not counted>", "?")
+    #l = l.replace("<not supported>", "?")
     i = l.find(".exe")
     return l[i+5:]
 
@@ -75,7 +79,7 @@ def pegavalores(file, ind):
     texto = ""
     print("abrindo ", file)
     with open(file, 'r+') as f:
-        firstLine = f.readline() # ignora a primeira linha
+        #firstLine = f.readline() # ignora a primeira linha
         for linha in f:
             linha = trata(linha)
             texto += linha + "," + str(ind) + "\n"
