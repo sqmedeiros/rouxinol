@@ -22,6 +22,8 @@ import platform
 import glob
 
 
+PULAEXECUCOES = False
+
         
 def listaarquivos(arquivos):
     lista = glob.glob(arquivos)
@@ -80,9 +82,12 @@ def pegavalores(file, ind):
     print("abrindo ", file)
     with open(file, 'r+') as f:
         #firstLine = f.readline() # ignora a primeira linha
+        n = 0
         for linha in f:
-            linha = trata(linha)
-            texto += linha + "," + str(ind) + "\n"
+            if n%10 == 0 or not PULAEXECUCOES:
+                linha = trata(linha)
+                texto += linha + "," + str(ind) + "\n"
+            n += 1
         f.close()
     return texto
 
