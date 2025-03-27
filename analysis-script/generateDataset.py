@@ -40,7 +40,7 @@ def cabecalho(lista):
     texto = "@relation problema\n"
     #le a primeira linha do primeiro arquivo pra pegar o nome dos atributos
     atributos = pegaatributos(lista[0])
-    for i in range(1,len(atributos)):
+    for i in range(1,len(atributos)): #pega a partir do segundo pra nao ter o nome do arquivo
         texto += "@attribute '" + atributos[i] + "' real\n"
 
     #descobre quantos programas tem no diretorio
@@ -64,6 +64,7 @@ def escrevearquivo(texto, arquivodataset):
 
 def trata(l):
     l = l.rstrip('\n')
+    l = l.replace(' ','')
     l = l.replace("<not counted>", "?")
     l = l.replace("<not supported>", "?")
     i = l.find(".exe")
