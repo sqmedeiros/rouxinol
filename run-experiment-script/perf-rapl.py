@@ -161,8 +161,8 @@ make_head_csv(csv_file, list_events + list_times)
 
 for i in range(NRUNS):
   
-  # executes only the first test
-  tests = tests[:1]
+  # assumes that there is only one test to execute
+  assert len(tests) == 1, "The 'test' directory must contain only one test file"
   
   measurements = {}
   for test in tests:
