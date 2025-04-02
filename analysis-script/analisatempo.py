@@ -46,7 +46,10 @@ print('Executing on ', sistemaoperacional)
 
 arquivos = sys.argv
 
-lista = listaarquivos(arquivos[1])
+if sistemaoperacional=='Linux':
+     lista = arquivos[1:]
+else:
+	   lista = listaarquivos(arquivos[1])
 
 cont = 0
 vprob = np.zeros(len(lista))
