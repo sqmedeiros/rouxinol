@@ -45,6 +45,9 @@ logFile = "myLog.txt"
 prevDir = "../"
 makefileDir = 'scripts/'
 
+def create_dir (mydir):
+  if not os.path.exists(mydir):
+    os.makedirs(mydir)
 
 def write_log (msg):
   print(msg)
@@ -137,6 +140,7 @@ kindofexperiment = checkexperimentname(experiment)
 dataAtual = datetime.now()
 dataFormatada = dataAtual.strftime("%d-%m-%Y-%H-%M")
 
+create_dir(logDir)
 write_log("Generating Makefiles")
 if useperf:
   print('Measurements with PERF')
