@@ -57,10 +57,12 @@ vm = np.zeros(len(lista))
 vd = np.zeros(len(lista))
 vmax = np.zeros(len(lista))
 vmin = np.zeros(len(lista))
+dataset = []
 for i in lista:
      vprob[cont]=cont
      df, ncolunas, nlinhas = carregacsv(i)
      tempo = df.loc[:,['duration_time']].values
+     dataset.append(tempo[:,0] )
      media = tempo.mean()
      vmax[cont] = tempo.max()
      vmin[cont] = tempo.min()
@@ -69,9 +71,13 @@ for i in lista:
      vd[cont]=desvio
      cont += 1
      
+     
 
-plt.errorbar(vprob,vm, yerr=nsigma*vd,fmt ='.r')
-plt.plot(vprob,vmax,'.b')
-plt.plot(vprob,vmin,'.g')
+
+#plt.errorbar(vprob,vm, yerr=nsigma*vd,fmt ='.r')
+#plt.plot(vprob,vmax,'.b')
+#plt.plot(vprob,vmin,'.g')
+plt.boxplot(dataset, positions=vprob,showfliers=False)
+
 plt.show()
      
