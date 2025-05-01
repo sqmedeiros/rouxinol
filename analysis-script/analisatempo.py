@@ -54,12 +54,15 @@ vd = np.zeros(len(lista))
 vmax = np.zeros(len(lista))
 vmin = np.zeros(len(lista))
 dataset = []
+dataset2 = []
 labels = []
 for i in lista:
      vprob[cont]=cont
      df, ncolunas, nlinhas = carregacsv(i)
      tempo = df.loc[:,['duration_time']].values
      dataset.append(tempo[:,0] )
+     consumo = df.loc[:,['pkg']].values
+     dataset2.append(consumo[:,0] )
      media = tempo.mean()
      vmax[cont] = tempo.max()
      vmin[cont] = tempo.min()
@@ -78,9 +81,16 @@ fig, ax = plt.subplots()
 ax.boxplot(dataset, positions=vprob,showfliers=False)
 plt.xlabel('Problem')
 ax.set_xticks(vprob, labels, rotation='vertical') 
-plt.title('Wall clock boxplot')
+plt.title('Wall-Clock Boxplot')
+plt.ylabel('Wall-Clock Time (ms)')
 
-plt.ylabel('Wall clock time (ms)')
+fig, ax = plt.subplots()
+ax.boxplot(dataset2, positions=vprob,showfliers=False)
+plt.xlabel('Problem')
+ax.set_xticks(vprob, labels, rotation='vertical') 
+plt.title('pkg Consumption Boxplot')
+
+plt.ylabel('Energy Comsumption (J)')
 
 plt.show()
      
