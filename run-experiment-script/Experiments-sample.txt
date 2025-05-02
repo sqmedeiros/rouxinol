@@ -1,8 +1,16 @@
-control-01 elite -perf
-training-01 elite -perf
-control-02 elite -perf
-training-02 elite -perf
-control-01 elite -perf
-training-01 elite -perf
-control-02 elite -perf
-training-02 elite -perf
+control-01 elite -O0 -perf
+training-01 elite -O0 -perf
+control-02 elite -O0 -perf
+training-02 elite -O0 -perf
+control-01 elite -O0 -perf
+training-01 elite -O0 -perf
+control-02 elite -O0 -perf
+training-02 elite -O0 -perf
+control-01 elite -O2 -perf
+training-01 elite -O2 -perf
+control-02 elite -O2 -perf
+training-02 elite -O2 -perf
+control-01 elite -O2 -perf
+training-01 elite -O2 -perf
+control-02 elite -O2 -perf
+training-02 elite -O2 -perf

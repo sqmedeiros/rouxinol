@@ -137,29 +137,30 @@ def recorta_primeira_linha(file):
 
 def extrai_params_linha(linha):
     params = linha.split()
-    if len(params) < 2:
+    if len(params) < 3:
       write_log('Arquivo Experimentos.txt faltando parametros. Abortando!')
       turnXon()
       apaga_arquivo(experiments)
       reinicia()
     exp = params[0]
     maq = params[1]
-    if len(params) == 3:
-        perf = params[2]
+    Oflag = params[2]
+    if len(params) == 4:
+        perf = params[3]
     else:
         perf = ''
-    return exp, maq, perf
+    return exp, maq, Oflag, perf
 
 def pega_prox_experimento(file):
     linha = recorta_primeira_linha(file)
-    exp, maq, perf = extrai_params_linha(linha)
-    return exp, maq, perf
+    exp, maq, Oflag, perf = extrai_params_linha(linha)
+    return exp, maq, Oflag, perf
     
 
 def gera_makefiles():
-  nomeexp, maquina,perf = pega_prox_experimento(experiments)
+  nomeexp, maquina, Oflag, perf = pega_prox_experimento(experiments)
   print(nomeexp, maquina,perf)
-  cmd = 'python3 scripts/generate_makefiles.py ' + nomeexp + ' ' + maquina + ' ' + perf
+  cmd = 'python3 scripts/generate_makefiles.py ' + nomeexp + ' ' + maquina + ' ' + Oflag + ' ' + perf
   os.system(cmd)
 
 
