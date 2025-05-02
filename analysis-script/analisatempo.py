@@ -60,6 +60,7 @@ for i in lista:
      vprob[cont]=cont
      df, ncolunas, nlinhas = carregacsv(i)
      tempo = df.loc[:,['duration_time']].values
+     tempo = tempo/(10**6)
      dataset.append(tempo[:,0] )
      consumo = df.loc[:,['pkg']].values
      dataset2.append(consumo[:,0] )
