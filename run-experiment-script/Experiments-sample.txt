@@ -1,0 +1,8 @@
+control-01 elite -perf
+training-01 elite -perf
+control-02 elite -perf
+training-02 elite -perf
+control-01 elite -perf
+training-01 elite -perf
+control-02 elite -perf
+training-02 elite -perf
