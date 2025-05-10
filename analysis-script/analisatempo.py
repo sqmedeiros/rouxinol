@@ -79,17 +79,17 @@ for i in lista:
 #plt.plot(vprob,vmax,'.b')
 #plt.plot(vprob,vmin,'.g')
 fig, ax = plt.subplots()
-ax.boxplot(dataset, positions=vprob,showfliers=False)
+ax.boxplot(dataset, patch_artist=True, positions=vprob,showfliers=False)
 plt.xlabel('Problem')
 ax.set_xticks(vprob, labels, rotation='vertical') 
-plt.title('Wall-Clock Boxplot')
+plt.title('Wall-Clock Boxplot (-O2 flag)')
 plt.ylabel('Wall-Clock Time (ms)')
 
 fig, ax = plt.subplots()
-ax.boxplot(dataset2, positions=vprob,showfliers=False)
+ax.boxplot(dataset2, patch_artist=True, positions=vprob,showfliers=False)
 plt.xlabel('Problem')
 ax.set_xticks(vprob, labels, rotation='vertical') 
-plt.title('pkg Consumption Boxplot')
+plt.title('pkg Consumption Boxplot (-O2 flag)')
 
 plt.ylabel('Energy Comsumption (J)')
 
