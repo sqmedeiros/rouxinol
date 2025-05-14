@@ -97,7 +97,7 @@ def add_measurement (measurements, k, v):
   measurements[k] += v
 
 
-def get_measurements (reader, measurements):
+def get_measurements (reader, measurements, elapsed_time):
 
   # power-relared measurements 
   for e in list_events:
@@ -121,6 +121,8 @@ def get_measurements (reader, measurements):
     v = int(row[0])
     add_measurement(measurements, x, v)
 
+  add_measurement(measurements, "perf_time", elapsed_time)
+
   
 def run_test (prog, output, csv_file, test_file, measurements):
   tmp_output = "saida.csv"
@@ -130,7 +132,10 @@ def run_test (prog, output, csv_file, test_file, measurements):
   power_flag = get_perf_flag()
   cmd_test = f"perf stat -x ';' -e {power_flag} {prog} {test_file} {output} 2>>{tmp_output}"
   print(f"Executing {cmd_test}")
+
+  start = time.perf_counter_ns()
   os.system(cmd_test)
+  stop = time.perf_counter_ns()
 
   with open(tmp_output, newline='') as csvfile:
     reader = csv.reader(csvfile, delimiter=';')
@@ -138,7 +143,7 @@ def run_test (prog, output, csv_file, test_file, measurements):
       row = next(reader)
       #print(f"Row {row} first = {is_perf_measurement(row)}")
       if is_perf_measurement(row):  # begin of perf measurement (extra pkg measurement)
-        get_measurements(reader, measurements)
+        get_measurements(reader, measurements, stop-start)
         break
 
   print(f"Finished test: {measurements}")
@@ -157,7 +162,7 @@ csv_entry = sys.argv[4]
 
 tests = sys.argv[5].strip().split(" ")
 
-make_head_csv(csv_file, list_events + list_times)
+make_head_csv(csv_file, list_events + list_times + ["perf_time"])
 
 for i in range(NRUNS):
   
@@ -175,6 +180,8 @@ for i in range(NRUNS):
     
   for x in list_times:
     entry_data.append(f"{measurements[x]:10.0f}")
+
+  entry_data.append(f"{measurements['perf_time']:10.0f}")
 
   make_new_csv_entry(csv_file, entry_data)   
 
