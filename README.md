@@ -7,7 +7,6 @@
 - `scripts`: auxiliary Pytyhon scripts to generate makefiles and to pick problems for the dataset.
 - `run-experiment-script`: Python scripts used to run an experiment.
 - `analysis-script`: Python scripts used when processing the result of an experiment.
-- 
 
 
 ## Running a experiment
