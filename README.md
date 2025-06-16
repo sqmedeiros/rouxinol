@@ -1,5 +1,4 @@
-# Dataset and Code Supporting the paper *A Source Code Independent Approach to Classify
-Programs Based on Energy Consumption and Running Time*
+# Dataset and Code Supporting the paper *A Source Code Independent Approach to Classify Programs Based on Energy Consumption and Running Time*
 
 ## Directory Structure
 
@@ -50,13 +49,13 @@ will restart one last time and you will see the graphical login screen.
 
 ## Processing the data
 
-8. Once all the experiments are complete, the files `Experiments.txt` and `ToProcess.txt`
+1. Once all the experiments are complete, the files `Experiments.txt` and `ToProcess.txt`
 (in the root of your local `rouxinol` repository) will be empty, and a folder
 named `results\<mymachine>` will be created. Inside this folder there will be four
 subfolders (named `control-01`, `control-02`, `training-01` and `training-02`) each representing an 
 experiment with the corresponding measurement results, for each problem, in separated .csv files.
 
-9. To generate the dataset files needed for classification for each experiment you need to execute
+2. To generate the dataset files needed for classification for each experiment you need to execute
 the python script located at rouxinol\analysis-script\generateDataset.py and pass as 
 argument the name of the .csv files for a given experiment. For example, after entering the 
 `training-01` folder you can execute: 
@@ -66,7 +65,7 @@ argument the name of the .csv files for a given experiment. For example, after e
 This will generate, in the local folder, a file named `dataset.arff`  (an Attribute-Relation
  File Format used by Weka).  
 
-10. After generating the dataset files for a given training and respective control experiments, 
+3. After generating the dataset files for a given training and respective control experiments, 
 you can use Weka Explorer to open the training file. Select `RandomForest` as the classifier 
 (with default values), select the control file as a test set, train and analyse 
 classification results.
