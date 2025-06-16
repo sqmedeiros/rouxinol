@@ -2,8 +2,6 @@
 """
 Created on Sat May 13 09:26:47 2023
 
-@author: Marcelo
-
 Lists all files in a directory and creat a dataset for weka with all the dataset
 The atributes of the dataset will be the given by the metrics in the first line of the csv of each file (they must be equal in every file)
 cpu-cycles,instructions,cache-references,cache-misses,branch-instructions,branch-misses,page-faults,branch-loads,branch-load-misses,L1-dcache-loads,L1-dcache-load-misses,L1-dcache-stores,L1-icache-load-misses,LLC-loads,LLC-load-misses,LLC-stores,LLC-store-misses,dTLB-loads,dTLB-load-misses,dTLB-stores,dTLB-store-misses,iTLB-loads,iTLB-load-misses,user_time,system_time
