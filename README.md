@@ -1,6 +1,15 @@
 # Dataset and Code Supporting the paper *A Source Code Independent Approach to Classify
 Programs Based on Energy Consumption and Running Time*
 
+## Directory Structure
+
+- 32 subfolders, one for each CSES problem, with 100 C++ solutions each.
+- `results`: has the .csv files with the results for machines `elite` and `think`
+- `scripts`: auxiliary Pytyhon scripts to generate makefiles and to pick problems for the dataset.
+- `run-experiment-script`: Python scripts used to run an experiment.
+- `analysis-script`: Python scripts used when processing the result of an experiment.
+- 
+
 
 ## Running a experiment
 
