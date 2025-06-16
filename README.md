@@ -26,26 +26,49 @@ to point to your local copy of the repository `rouxinol`.
 
 4. Update init jobs: `sudo update-rc.d myscript defaults`
 
-5. Create blank file `ToProcess.txt` in the root of your local `rouxinol`
-repository.
+5. Optinal: edit `Experiments.txt` in the root of your local `rouxinol` repository
+and replace 'mymachine' with the name of your machine. You can also use the optimization
+flag -O0 instead of -O2. Below find the default configuration of `Experiments.txt` when
+cloning the repository:
 
-
-6. Create `Experiments.txt` in the root of your local `rouxinol` repository
-with experiments you want to run.
+```
+control-01 mymachine -O2 -perf
+training-01 mymachine -O2 -perf
+control-02 mymachine -O2 -perf
+training-02 mymachine -O2 -perf
+```
  
-7. Examples of experiments:
-control-01 mymachine -perf
-training-01 mymachine -perf
-control-01 mymachine -perf
-training-01 mymachine -perf
+6. Restart the computer. Do not interect with the computer to avoid interfering with
+the energy measurements. 
 
-8. Restart the computer.
-
-9. The experiment will disable the network interface. The experiment emits
+7. The experiment will disable the network and graphical interfaces. The experiment emits
 several beeps after processing a given problem (e.g., 1084-Apartments) and
-then restarts the computer to process the next problem (e.g., 1091-Concert_Tickets).
+then restarts the computer to process the next problem (e.g., 1091-Concert_Tickets). 
 
+8. The experiment will take aproximatelly 9 hours. When the experiment is over, the computer
+will restart one last time and you will see the graphical login screen.
 
 ## Processing the data
 
-Marcelo, escreva aqui...
+8. Once all the experiments are complete, the files `Experiments.txt` and `ToProcess.txt`
+(in the root of your local `rouxinol` repository) will be empty, and a folder
+named `results\<mymachine>` will be created. Inside this folder there will be four
+subfolders (named `control-01`, `control-02`, `training-01` and `training-02`) each representing an 
+experiment with the corresponding measurement results, for each problem, in separated .csv files.
+
+9. To generate the dataset files needed for classification for each experiment you need to execute
+the python script located at rouxinol\analysis-script\generateDataset.py and pass as 
+argument the name of the .csv files for a given experiment. For example, after entering the 
+`training-01` folder you can execute: 
+
+`python ..\..\..\analysis-script\generateDataset.py *.csv`
+
+This will generate, in the local folder, a file named `dataset.arff`  (an Attribute-Relation
+ File Format used by Weka).  
+
+10. After generating the dataset files for a given training and respective control experiments, 
+you can use Weka Explorer to open the training file. Select `RandomForest` as the classifier 
+(with default values), select the control file as a test set, train and analyse 
+classification results.
+
+

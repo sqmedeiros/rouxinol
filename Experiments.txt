@@ -1,0 +1,4 @@
+control-01 mymachine -O2 -perf
+training-01 mymachine -O2 -perf
+control-02 mymachine -O2 -perf
+training-02 mymachine -O2 -perf
