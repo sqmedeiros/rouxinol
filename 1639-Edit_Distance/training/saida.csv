@@ -1,0 +1,10 @@
+./916026.exe: Falha de segmentação
+1,02;Joules;power/energy-pkg/;93708148;100,00;;
+1,02;Joules;power/energy-pkg/;93707040;100,00;;
+1,00;Joules;power/energy-cores/;93706241;100,00;;
+0,07;Joules;power/energy-ram/;93705193;100,00;;
+0,00;Joules;power/energy-gpu/;93703902;100,00;;
+2,83;Joules;power/energy-psys/;93702104;100,00;;
+93688204;ns;duration_time;93688204;100,00;;
+2110000;ns;user_time;2110000;100,00;;
+4221000;ns;system_time;4221000;100,00;;

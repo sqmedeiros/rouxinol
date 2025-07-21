@@ -1,0 +1,10 @@
+./877792.exe: Falha de segmentação
+1,91;Joules;power/energy-pkg/;170186144;100,00;;
+1,91;Joules;power/energy-pkg/;170185081;100,00;;
+1,83;Joules;power/energy-cores/;170184377;100,00;;
+0,14;Joules;power/energy-ram/;170183111;100,00;;
+0,00;Joules;power/energy-gpu/;170181419;100,00;;
+5,27;Joules;power/energy-psys/;170179442;100,00;;
+170163852;ns;duration_time;170163852;100,00;;
+76143000;ns;user_time;76143000;100,00;;
+9017000;ns;system_time;9017000;100,00;;

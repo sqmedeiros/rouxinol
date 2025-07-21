@@ -1,0 +1,9 @@
+1,58;Joules;power/energy-pkg/;155277622;100,00;;
+1,58;Joules;power/energy-pkg/;155277171;100,00;;
+1,52;Joules;power/energy-cores/;155276433;100,00;;
+0,09;Joules;power/energy-ram/;155275420;100,00;;
+0,00;Joules;power/energy-gpu/;155274199;100,00;;
+4,25;Joules;power/energy-psys/;155272487;100,00;;
+155259170;ns;duration_time;155259170;100,00;;
+148154000;ns;user_time;148154000;100,00;;
+7007000;ns;system_time;7007000;100,00;;

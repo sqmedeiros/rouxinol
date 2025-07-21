@@ -1,0 +1,28 @@
+# started on Mon Jul 21 08:55:58 2025
+
+666316950;;cpu-cycles;194379377;33,00;;
+902047490;;instructions;222382678;37,00;1;insn per cycle
+10218815;;cache-references;226143504;38,00;;
+1686985;;cache-misses;230121907;39,00;16;of all cache refs
+169763211;;branch-instructions;234056702;39,00;;
+997671;;branch-misses;238101547;40,00;0;of all branches
+155;;page-faults;585365862;100,00;;
+164998442;;branch-loads;242051376;41,00;;
+961798;;branch-load-misses;246019664;42,00;;
+258122152;;L1-dcache-loads;249874555;42,00;;
+945864;;L1-dcache-load-misses;251900903;43,00;0;of all L1-dcache accesses
+142539924;;L1-dcache-stores;224006644;38,00;;
+3472751;;L1-icache-load-misses;223961090;38,00;;
+339273;;LLC-loads;223941119;38,00;;
+117692;;LLC-load-misses;224000914;38,00;34;of all LL-cache accesses
+520330;;LLC-stores;55183834;9,00;;
+262274;;LLC-store-misses;51355369;8,00;;
+298365032;;dTLB-loads;75335706;12,00;;
+292527;;dTLB-load-misses;99440559;16,00;0;of all dTLB cache accesses
+159154416;;dTLB-stores;123365520;21,00;;
+20422;;dTLB-store-misses;147435555;25,00;;
+291723;;iTLB-loads;171423391;29,00;;
+253439;;iTLB-load-misses;195507878;33,00;86;of all iTLB cache accesses
+146053655;ns;duration_time;146053655;100,00;;
+108349000;ns;user_time;108349000;100,00;;
+37119000;ns;system_time;37119000;100,00;;

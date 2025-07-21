@@ -1,0 +1,10 @@
+./899348.exe: Falha de segmentação
+1,92;Joules;power/energy-pkg/;174340954;100,00;;
+1,92;Joules;power/energy-pkg/;174340434;100,00;;
+1,86;Joules;power/energy-cores/;174339640;100,00;;
+0,15;Joules;power/energy-ram/;174338634;100,00;;
+0,00;Joules;power/energy-gpu/;174337344;100,00;;
+5,26;Joules;power/energy-psys/;174336061;100,00;;
+174322996;ns;duration_time;174322996;100,00;;
+78916000;ns;user_time;78916000;100,00;;
+9989000;ns;system_time;9989000;100,00;;

@@ -1,0 +1,6 @@
+./8686515.exe: Segmentation fault
+7,25;Joules;power/energy-pkg/;234253959;100,00;;
+7,28;Joules;power/energy-pkg/;234254864;100,00;;
+0,74;Joules;power/energy-ram/;234255795;100,00;;
+100721000;ns;user_time;100721000;100,00;;
+12590000;ns;system_time;12590000;100,00;;
