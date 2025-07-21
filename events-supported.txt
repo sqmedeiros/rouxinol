@@ -21,5 +21,6 @@ dTLB-stores
 dTLB-store-misses
 iTLB-loads
 iTLB-load-misses
+duration_time
 user_time
 system_time

@@ -16,7 +16,7 @@ def make_head_csv (csv_file, events):
   if os.path.isfile(csv_file):
     return
     
-  fields = [ "file" ] + events
+  fields = [ "file" ] + events + [ "perf_time"]
   entry_data = ','.join(fields)
   with open(csv_file, "a+") as f:
     f.write(entry_data)
@@ -57,7 +57,7 @@ def get_measurement (row):
   return value
 
 
-def get_measurements (reader, measurements):
+def get_measurements (reader, measurements, elapsed_time):
   for x in measurements.keys():
     # system time may not be measured, so "0" is provided as a default value
     # It must be the last event in the list of events
@@ -70,6 +70,7 @@ def get_measurements (reader, measurements):
     else:
        measurements[x] = value
 
+  measurements["perf_time"] = elapsed_time
 
 def run_test (prog, output, csv_file, test_file, measurements):
   tmp_output = "saida.csv"
@@ -80,7 +81,10 @@ def run_test (prog, output, csv_file, test_file, measurements):
   str_events = ','.join(events_list)
   cmd_test = f"perf stat -a -o {tmp_output} -x ';' -e {str_events} {prog} {test_file} {output} 2>>{dev_null}"
   print(f"Executing {cmd_test}")
+
+  start = time.perf_counter_ns()
   os.system(cmd_test)
+  stop = time.perf_counter_ns()
 
   with open(tmp_output, newline='') as csvfile:
     reader = csv.reader(csvfile, delimiter=';')
@@ -88,7 +92,7 @@ def run_test (prog, output, csv_file, test_file, measurements):
     row = next(reader)
     # Empty row
     row = next(reader)
-    get_measurements(reader, measurements)
+    get_measurements(reader, measurements, stop - start)
  
 
   #print(f"Finished test:")
