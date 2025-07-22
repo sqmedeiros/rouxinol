@@ -1,9 +1,5 @@
-3,37;Joules;power/energy-pkg/;393491553;100,00;;
-3,37;Joules;power/energy-pkg/;393490385;100,00;;
-3,24;Joules;power/energy-cores/;393489557;100,00;;
-0,20;Joules;power/energy-ram/;393488617;100,00;;
-0,00;Joules;power/energy-gpu/;393487306;100,00;;
-10,10;Joules;power/energy-psys/;393485668;100,00;;
-393471265;ns;duration_time;393471265;100,00;;
-388406000;ns;user_time;388406000;100,00;;
-4992000;ns;system_time;4992000;100,00;;
+15,88;Joules;power/energy-pkg/;526373004;100,00;;
+15,88;Joules;power/energy-pkg/;526373415;100,00;;
+1,68;Joules;power/energy-ram/;526374659;100,00;;
+514493000;ns;user_time;514493000;100,00;;
+11964000;ns;system_time;11964000;100,00;;
