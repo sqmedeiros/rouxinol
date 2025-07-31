@@ -38,7 +38,7 @@ dirs = [
   "1674-Subordinates",
   "2166-Prefix_Sum_Queries",
   "2185-Prime_Multiples"
-] 
+]
 
 logDir = "log/"
 logFile = "myLog.txt"
@@ -80,6 +80,8 @@ def generateMakefileText(mydir,experiment,kindofexperiment,dataFormatada,machine
     texto = texto + "-rapl" +  "\n"
 
   texto  = texto + "export CPPFLAGS = -DONLINE_JUDGE -std=c++17 -O2\n"
+  #ollvm_flag = "-mllvm -fla -mllvm -sub -mllvm -bcf -w -g -ggdb -fno-stack-protector -no-pie -DONLINE_JUDGE --std=c++17"
+  #texto = texto + f'export CPPFLAGS = {ollvm_flag}\n'
   if useperf:
     texto = texto + "export OUTPUT = 2>&1 > /dev/null\n"
   else:
@@ -123,6 +125,7 @@ def generateexperimentdir(experiment,kindofexperiment,mydir):
 def copyMakefilesubdir(kindofexperiment, mydir, useperf):
   if useperf:
     os.system('cp ' + makefileDir + 'Makefile-perf ' + mydir + '/' + kindofexperiment + '/Makefile')
+    #os.system('cp ' + makefileDir + 'Makefile-perf-clang ' + mydir + '/' + kindofexperiment + '/Makefile')
   else:
     os.system('cp ' + makefileDir + 'Makefile-RAPL ' + mydir + '/' + kindofexperiment + '/Makefile')
 
