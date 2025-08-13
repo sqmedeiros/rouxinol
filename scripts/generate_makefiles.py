@@ -80,7 +80,7 @@ def generateMakefileText(mydir,experiment,kindofexperiment,dataFormatada,machine
   if useperf:
     texto = texto + "-perf" +  "\n"
   else:
-    texto = texto + "-rapl" +  "\n"
+    texto = texto + "-cfggrind" +  "\n"
 
   texto  = texto + "export CPPFLAGS = -DONLINE_JUDGE -std=c++17 " + Oflag + "\n"
   if useperf:
@@ -128,7 +128,7 @@ def copyMakefilesubdir(kindofexperiment, mydir, useperf):
   if useperf:
     os.system('cp ' + makefileDir + 'Makefile-perf ' + mydir + '/' + kindofexperiment + '/Makefile')
   else:
-    os.system('cp ' + makefileDir + 'Makefile-RAPL ' + mydir + '/' + kindofexperiment + '/Makefile')
+    os.system('cp ' + makefileDir + 'Makefile-cfggrind ' + mydir + '/' + kindofexperiment + '/Makefile')
 
 arquivos = sys.argv
 
@@ -146,7 +146,7 @@ write_log("Generating Makefiles")
 if useperf:
   print('Measurements with PERF')
 else:
-  print('Measurements with RAPL')
+  print('Measurements with CFGgrind')
 
 
 for mydir in dirs:

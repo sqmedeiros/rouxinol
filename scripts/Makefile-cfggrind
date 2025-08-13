@@ -1,0 +1,10 @@
+compile: $(patsubst %.cpp, %.exe, $(wildcard *.cpp))
+
+%.exe: %.cpp Makefile
+	g++ $< -o $@ $(CPPFLAGS)
+	sudo prlimit --stack=unlimited python3 ../../run-experiment-script/cfggrind.py "./$@ < "  "$(OUTPUT)" ../$(PROBLEM) $@	"$(TEST)"
+	
+		
+clean:
+	rm *.exe
+
