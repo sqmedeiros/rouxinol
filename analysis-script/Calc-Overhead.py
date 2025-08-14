@@ -19,6 +19,7 @@ def calc_time_diff (df1, df2):
     for index, row in df2.iterrows():
       x = row['perf_time'] / row['duration_time']
       diffs.append(x)
+      print(diffs)
 
     return diffs
 
@@ -37,6 +38,7 @@ def openfiles(files,i):
     return df1,df2, file
 
 arquivos = sys.argv
+
 
 directory = os.path.join(".",arquivos[1])
 diffstudo = []
@@ -111,7 +113,7 @@ ax.legend(loc="upper left")
 
 plt.xlabel('Problem')
 ax.set_xticks(vprob, labels, rotation='vertical') 
-plt.title('Median Overhead by problem (' + file[-17:-12] + ' machine -'+ arquivos[1][-3:-1] + ' flag)')
+plt.title('Median Overhead by problem (' + file[-14:-9] + ' machine -'+ arquivos[1][-3:-1] + ' flag)')
 plt.ylabel('Median wall-clock time (ms)')
 
 plt.show()
