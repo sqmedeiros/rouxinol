@@ -110,9 +110,10 @@ print(f"Maximo da diferenca de tempo Total CFGGRIND = {max(diffsabsolutatudocfgg
 machine, flag = machineflag(files[0])
 fig, ax = plt.subplots()
 width = 0.75
+#ax.bar(vprob, temposmedianos, width, label='Median wall-clock time', bottom=np.zeros(len(vprob)), color='blue')
 ax.bar(vprob, temposmedianos, width, label='Median wall-clock time', bottom=np.zeros(len(vprob)))
-ax.bar(vprob, np.array(temposcfggrindmedianos)-np.array(temposmedianos), width, label='Median overhead Cfggrind', bottom=temposmedianos)
-ax.bar(vprob, np.array(temposovermedianos)-np.array(temposmedianos), width, label='Median overhead Perf', bottom=temposcfggrindmedianos)
+ax.bar(vprob, np.array(temposovermedianos)-np.array(temposmedianos), width, label='Median overhead Perf', bottom=temposmedianos)
+ax.bar(vprob, np.array(temposcfggrindmedianos)-np.array(temposmedianos), width, label='Median overhead Cfggrind', bottom=temposovermedianos)
 ax.legend(loc="upper left")
 
 plt.xlabel('Problem')
