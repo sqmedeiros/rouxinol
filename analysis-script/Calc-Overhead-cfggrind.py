@@ -77,6 +77,7 @@ temposcfggrindmedianos =[]
 for root,dirs,files in os.walk(directory):
     
     #for file in sorted(files):
+    files = sorted(files)
     for i in range(0, len(files),4):
        
        df = openfiles(files[i:i+4])
