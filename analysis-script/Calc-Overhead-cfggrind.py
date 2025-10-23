@@ -4,7 +4,8 @@ import sys
 import statistics
 import matplotlib.pyplot as plt
 import numpy as np
-
+#from scipy import stats
+#from cliffs_delta import cliffs_delta
 
 def show_diffs (xs):
     for x in xs:
@@ -38,7 +39,7 @@ def machineflag(file):
 def openfiles(files):
     df = list()
     for f in files:
-        print(f)
+        #print(f)
         path = os.path.join(directory, f)
         df.append(pd.read_csv(path))
     return df
@@ -61,6 +62,31 @@ def extraitempos(df):
     
     return tempo, tempo_over, tempo_cfggrind
 
+def calc_wicoxon (problema, tempo, tempo_perf, tempo_cfggrind):
+  print(f"----  {problema}   ----")
+  statistic, pvalue = stats.wilcoxon(tempo, tempo_perf)
+  print("Tempo Original x Perf: ", statistic, pvalue)
+  if pvalue < 0.05:
+    d, res = cliffs_delta(tempo, tempo_perf)
+    print(f"Cliff {d}, {res}")
+  
+  statistic, pvalue = stats.wilcoxon(tempo, tempo_cfggrind)
+  print("Tempo Original x CFGgrind = ", statistic, pvalue)
+  if pvalue < 0.05:
+    d, res = cliffs_delta(tempo, tempo_cfggrind)
+    print(f"Cliff {d}, {res}")
+
+  print()
+
+
+
+def calc_mww (problema, tempo, tempo_perf, tempo_cfggrind):
+  print(f"----  {problema}   ----")
+  print("Tempo Original x Perf: ", stats.mannwhitneyu(tempo, tempo_perf))
+  
+  
+  print("Tempo Original x CFGgrind = ", stats.mannwhitneyu(tempo, tempo_cfggrind))
+  print()
 
 arquivos = sys.argv
 
@@ -77,11 +103,14 @@ temposcfggrindmedianos =[]
 for root,dirs,files in os.walk(directory):
     
     #for file in sorted(files):
+    files = sorted(files)
     for i in range(0, len(files),4):
        
        df = openfiles(files[i:i+4])
         
        tempo, tempo_over, tempo_cfggrind = extraitempos(df)
+       #calc_mww(files[i][:5], tempo, tempo_over, tempo_cfggrind)
+       #calc_wicoxon(files[i][:5], tempo, tempo_over, tempo_cfggrind) 
 
        temposmedianos.append(statistics.median(tempo))
        temposovermedianos.append(statistics.median(tempo_over))
@@ -103,6 +132,10 @@ print(f"Mediana da diferenca de tempo Total CFGGRIND = {statistics.median(diffsa
 print(f"Media da diferenca de tempo Total CFGGRIND = {statistics.mean(diffsabsolutatudocfggrind)}")
 print(f"Minimo da diferenca de tempo Total CFGGRIND = {min(diffsabsolutatudocfggrind)}")
 print(f"Maximo da diferenca de tempo Total CFGGRIND = {max(diffsabsolutatudocfggrind)}")
+
+print("Tempos mediana", temposmedianos)
+print("Tempos mediana perf", temposovermedianos)
+print("Tempos mediana cfggrind", temposcfggrindmedianos)
 
 
 #sem ser normalizado, mostrando os tempos
