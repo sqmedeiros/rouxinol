@@ -15,6 +15,6 @@ instructions
 page-faults
 power/energy-pkg/
 power/energy-ram/
+duration_time
 user_time
 system_time
-duration_time
