@@ -1,0 +1,15 @@
+L1-dcache-loads
+L1-dcache-load-misses
+branch-instructions
+branch-load-misses
+branch-loads
+branch-misses
+cache-misses
+cache-references
+cpu-cycles
+dTLB-load-misses
+dTLB-loads
+iTLB-loads
+iTLB-load-misses
+instructions
+page-faults
