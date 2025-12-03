@@ -115,7 +115,7 @@ tests = sys.argv[5].strip().split(" ")
                #pkg, ram, cpu_time  
 
 
-with open("../../events-supported.txt", 'r') as event_file:
+with open("../../common_events_energy.txt", 'r') as event_file:
   events_list = event_file.read().strip().split('\n')
 
 
