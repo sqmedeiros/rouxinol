@@ -64,8 +64,10 @@ def checkexperimentname(experiment):
     return 'control'
   elif experiment[0:8] == 'training':
     return 'training'
+  elif experiment[0:4] == 'full':
+    return 'full'
   else:
-    print('unrecognized experiment type. Muste be control or training. Aborting')
+    print('unrecognized experiment type. Muste be "control", "training" or "full". Aborting')
     exit()
 
 def generateEntryline(entries):
@@ -91,7 +93,7 @@ def generateMakefileText(mydir,experiment,kindofexperiment,dataFormatada,machine
   entryline  = generateEntryline(entries)
   texto = texto + entryline
   texto = texto + "all:\n\t+$(MAKE) -C " + kindofexperiment + "\n"
-  texto = texto + "clean:\n\trm rand/*.exe training/*.exe control/*.exe\n"
+  texto = texto + "clean:\n\trm rand/*.exe training/*.exe control/*.exe full/*.exe\n"
   return texto
 
 def createMakefile(mydir,experiment,kindofexperiment,dataFormatada, machine,Oflag,useperf):
