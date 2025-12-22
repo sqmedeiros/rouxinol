@@ -10,10 +10,12 @@ import os
 
 linguagem = 5 #8 python, 5 java, 2 C, 3 C++
 solutions_per_page = 30
-pegar_n_solucoes = 2 #solucoes de cada problema a serem extraidas
+pegar_n_solucoes = 15 #solucoes de cada problema a serem extraidas
 lista_problemas = [
    "1071",
    "1082",
+   "1084",
+   "1140"
 ]
 # lista_problemas = [
 #   "1071",
@@ -99,13 +101,38 @@ def sem_extensao(nome):
     i = nome.find('.')
     return nome[0:i]
 
+def fix_java(codigo, nome_sem_extensao):
+    #acha classe publica e substitiu pelo nome do arquivo
+    padrao = r'public\s+[final\s*]*class\s+(\w+)\s*([implements\s+\w\s*]*){'
+    
+    #acha nome da classe publica atual
+    p = re.compile(padrao)
+    matches = p.findall(codigo)
+    
+    codigo = re.sub(padrao,'public class ' + nome_sem_extensao + r' \2' + '{',codigo)
+    
+    #substitiu chamadas a classe publica pelo novo nome
+    if len(matches)>0:
+        matches = matches[0]
+        if len(matches)>0:
+            nome_classe = matches[0]
+            if nome_classe != '':
+                #codigo = codigo.replace(nome_classe, nome_sem_extensao)
+                #acha o nome da classe seguido de um caractere nao alfa numerico
+                novopadrao = rf"\b{nome_classe}\b(\W)"
+                codigo = re.sub(novopadrao,nome_sem_extensao + r'\1',codigo)
+                
+    
+    
+    return codigo
+
 def salva_codigo(problema,nome,codigo):
     #cria diretorio caso nao exista
     os.makedirs(problema, exist_ok=True)
     #acha nome sem extensao
     nome_sem_extensao = sem_extensao(nome)
     if linguagem == 5:
-        codigo = codigo.replace('public static void main','public static void ' + nome_sem_extensao)
+        codigo = fix_java(codigo, nome_sem_extensao)
     with open(problema + '/' + nome, 'w', encoding="utf-8") as f:
         f.write(codigo)
         
@@ -151,6 +178,8 @@ time.sleep(1)
 
 fazLogin(driver,"sqmedeiros","Mmarcelo52")
 
+contproblema = 0
+nproblemas = len(lista_problemas)
 for problema in lista_problemas:
     
     solucoes_sorteadas = []
@@ -171,7 +200,11 @@ for problema in lista_problemas:
         nome = extrai_nome(link)
         solucoes_sorteadas.append(nome)
         salva_codigo(problema,nome,codigo)
+        completo = (cont+pegar_n_solucoes*contproblema)/(nproblemas*pegar_n_solucoes)*100
+        print(f'Completo: {completo:.2f}%')
         cont += 1
+        
     salva_lista_solucoes_sorteadas(problema,solucoes_sorteadas)
+    contproblema += 1
 
 
