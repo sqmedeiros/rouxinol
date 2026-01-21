@@ -8,14 +8,13 @@ import os
 
 
 
-linguagem = 5 #8 python, 5 java, 2 C, 3 C++
+linguagem = 8 #8 python, 5 java, 2 C, 3 C++
 solutions_per_page = 30
-pegar_n_solucoes = 15 #solucoes de cada problema a serem extraidas
+pegar_n_solucoes = 35 #solucoes de cada problema a serem extraidas
 lista_problemas = [
    "1071",
-   "1082",
-   "1084",
-   "1140"
+   "1190",
+   "1082"
 ]
 # lista_problemas = [
 #   "1071",
@@ -171,11 +170,13 @@ def salva_lista_solucoes_sorteadas(problema,solucoes_sorteadas):
             f.write(str(l) + '\n')
 
 
+pegar_n_solucoes_original = pegar_n_solucoes
 #inicia navegador
+print('Iniciando o navegador')
 driver = webdriver.Chrome() 
 driver.get("https://cses.fi/login")
 time.sleep(1)
-
+print('Logando no CSES')
 fazLogin(driver,"sqmedeiros","Mmarcelo52")
 
 contproblema = 0
@@ -185,9 +186,12 @@ for problema in lista_problemas:
     solucoes_sorteadas = []
 
     #entra no problema atual, na primeira pagina para pegar o numero de solucoes que tem
-    print('acessando o problema  ' +  problema )
+    print('Acessando o problema  ' +  problema )
     n_solucoes = extrai_numero_solucoes(problema,driver)
-    print(str(n_solucoes) + " achadas")
+    print(str(n_solucoes) + " solucoes achadas")
+    if n_solucoes < pegar_n_solucoes:
+        print('Número de soluções disponíveis inferior ao número requisitado! Pegando o maximo que existe!')
+        pegar_n_solucoes = n_solucoes
     page_last_solution = int(np.floor(n_solucoes/solutions_per_page))
     
     cont = 1
@@ -206,5 +210,7 @@ for problema in lista_problemas:
         
     salva_lista_solucoes_sorteadas(problema,solucoes_sorteadas)
     contproblema += 1
+    pegar_n_solucoes = pegar_n_solucoes_original
+
 
 
