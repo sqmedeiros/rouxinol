@@ -4,29 +4,29 @@ import numpy as np
 # data from https://allisonhorst.github.io/palmerpenguins/
 
 machines = (
-    "ELITE",
-    "THINK",
+    "PC1",#iot
+    "PC2",#elite
+    "PC3",#think
 )
-tempo = np.array([42.65, 44.38])
-tpkg = np.array([54.53, 48.28])
-tpkgcore = np.array([57.34, 49.06])
-all = np.array([64.06, 49.84])
+pkgcores = np.array([25.25, 26.78,29.25])
+ram = np.array([44.75, 43.16,29.25])
+psys = np.array([53.1, 50.81, 29.25])
+
 weight_counts = {
-    "Time": tempo,
-    "Time+pkg": tpkg - tempo,
-    "Time+pkg+cores": tpkgcore - tpkg,
-    "All data available": all - tpkgcore,
+    "Pkg+Cores": pkgcores,
+    "Pkg+Cores+RAM": ram - pkgcores,
+    "Pkg+Cores+RAM+PSys": psys - ram,
 }
 width = 0.5
 
 fig, ax = plt.subplots()
-bottom = np.zeros(2)
+bottom = np.zeros(3)
 
 for boolean, weight_count in weight_counts.items():
     p = ax.bar(machines, weight_count, width, label=boolean, bottom=bottom)
     bottom += weight_count
 
-ax.set_title("Classification Accuracy Increasing Number of Attributes (flag -O2)")
+ax.set_title("Classification Accuracy Using RAPL Energy Domains (flag -O2)")
 ax.legend(loc="upper right")
 plt.ylabel('Percentage Correctly Classified')
 
